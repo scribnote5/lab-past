@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>NoticeBoard Read</title>
+
+<link rel="stylesheet" th:href="@{/css/base.css}" />
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+
+</head>
+<body>
+	<!-- header -->
+    <div th:replace="layout/header::header"></div>
+
+    <div class="container">
+    	<form id="form" th:object="${noticeBoard}" action="#"  >
+    
+        <div class="page-header">
+            <h1>게시글 읽기</h1>
+        </div>
+        <br/>
+        <table class="table">
+            <tr>
+                <th style="padding:13px 0 0 15px">게시판 선택</th>
+                <td>
+                    <div class="pull-left">
+                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'active'}" th:text="게시중"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'inactive'}" th:text="비게시중"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'notice'}" th:text="공지사항"> </span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">생성날짜</th>
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(createdDate,'yyyy-MM-dd HH:mm')}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">수정날짜</th>
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(updatedDate,'yyyy-MM-dd HH:mm')}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">제목</th>
+                <td><span id="title" class="col-md-1 form-control input-sm" th:text="*{title}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">내용</th>
+                <td><span id="content" class="col-md-1 form-control input-sm" style="height: 200px;" th:text="*{content}"></span></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        
+        <div class="pull-left">
+            <a href="/NoticeBoard/list" class="btn btn-default">목록으로</a>
+        </div>
+        <div class="pull-right">
+        	<a th:href="'/NoticeBoard/form?idx='+*{idx}" class="btn btn-info"> 수정</a>
+            <button type="button" class="btn btn-danger" id="delete">삭제</button>
+        </div>
+        
+        <!-- input type="hidden" -->
+		<input type="hidden" name="idx" th:value="*{idx}"/>
+        
+        </form>
+    </div>
+    
+	<!-- footer -->
+    <div th:replace="layout/footer::footer"></div>
+	
+    <!-- script file -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script>
+    	$('#delete').click(function () {
+        	if(confirm("삭제 하시겠습니까?")) { 
+        		$.ajax({
+                    url: "/api/NoticeBoards/" + document.getElementsByName('idx')[0].value,
+                    type: "DELETE",
+                    dataType: "text",
+                    contentType: "application/json",
+                    
+                    success: function () {
+                        alert('삭제 성공!');
+                        location.href = '/NoticeBoard/list';
+                    },
+                    error: function () {
+                        alert('삭제 실패!');
+                    }
+                });
+        	}
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>NoticeBoard Form</title>
+
+<link rel="stylesheet" th:href="@{/css/base.css}" />
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+
+</head>
+<body>
+	<!-- header -->
+    <div th:replace="layout/header::header"></div>
+    
+    <div class="container">
+    	<form id="form" th:object="${noticeBoard}" action="#"  >
+    
+        <div class="page-header">
+            <h1 th:if="!*{idx}">게시글 등록</h1>
+            <h1 th:if="*{idx}">게시글 수정</h1>
+        </div>
+        <br/>
+        <table class="table">
+            <tr>
+                <th style="padding:13px 0 0 15px">게시판 선택</th>
+                <td>
+                    <div class="pull-left">
+                        <select name="postStatus" class="form-control input-sm">
+                            <option>--분류--</option>
+                            <option th:value="active" th:selected="*{postStatus?.name() == 'active'}">게시중</option>
+                            <option th:value="inactive" th:selected="*{postStatus?.name() == 'inactive'}">비게시중</option>
+                            <option th:value="notice" th:selected="*{postStatus?.name() == 'notice'}">공지사항</option>
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="*{idx}">
+                <th style="padding:13px 0 0 15px;">생성 날짜</th>
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(createdDate,'yyyy-MM-dd HH:mm')}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">제목</th>
+                <td><input type="text" name="title" class="col-md-1 form-control input-sm" th:value="*{title}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">내용</th>
+                <td><textarea name="content" class="col-md-1 form-control input-sm" maxlength="140" rows="7" style="height: 250px;" th:text="*{content}"></textarea></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            
+        </table>
+        
+        <div class="pull-left">
+            <a href="/NoticeBoard/list" class="btn btn-default">목록으로</a>
+        </div>
+        <div class="pull-right">
+            <button th:if="!*{idx}" id="insert" type="button" class="btn btn-primary">저장</button>
+            <button th:if="*{idx}" id="update" type="button" class="btn btn-info">수정완료</button>
+        </div>
+        
+        <!-- input type="hidden" -->
+		<input type="hidden" name="idx" th:value="*{idx}"/>
+	    <input type="hidden" name="createdDate" th:value="*{createdDate}"/>
+	    
+	    </form>
+    </div>
+    
+	<!-- footer -->
+    <div th:replace="layout/footer::footer"></div>
+
+	<!-- script file -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/jquery.serialize-object.min.js}"></script>
+    
+	<!-- javascript -->   
+    <script th:if="!${noticeBoard?.idx}">
+   		$('#insert').click(function () {
+	       	var jsonData = $("#form").serializeObject();
+	       
+            $.ajax({
+				url: "/api/NoticeBoards",
+				type: "POST",
+                data: JSON.stringify(jsonData),
+				dataType: "text",
+				contentType: "application/json",
+				
+                success: function () {
+                    alert('저장 성공!');
+                    location.href = '/NoticeBoard/list';
+              	},
+                error: function () {
+                    alert('저장 실패!');
+               	}
+			});
+   		});
+    </script>
+    <script th:if="${noticeBoard?.idx}">
+    	$('#update').click(function () {
+        	var jsonData = $("#form").serializeObject();
+        	
+            $.ajax({
+                url: "/api/NoticeBoards/" + document.getElementsByName('idx')[0].value,
+                type: "PUT",
+                data: JSON.stringify(jsonData),
+                dataType: "text",
+                contentType: "application/json",
+                
+                success: function () {
+                    alert('수정 성공!');
+                    location.href = '/NoticeBoard?idx=' + document.getElementsByName('idx')[0].value;
+                },
+                error: function () {
+                    alert('수정 실패!');
+                }
+            });
+    	});
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>NoticeBoard List</title>
+
+<link rel="stylesheet" th:href="@{/css/base.css}" />
+<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+
+</head>
+<body>
+	<!-- header -->
+	<div th:replace="layout/header::header"></div>
+
+	<div class="container">
+		<div class="page-header">
+			<h1>게시글 목록</h1>
+		</div>
+		<div class="pull-right" style="width: 100px; margin: 10px 0;">
+			<a href="/NoticeBoard/form" class="btn btn-primary btn-block">등록</a>
+		</div>
+		<br /> <br /> <br />
+		<div id="mainHide">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th class="col-md-1">idx</th>
+						<th class="col-md-4">제목</th>
+						<th class="col-md-2">글쓴이</th>
+						<th class="col-md-2">작성 날짜</th>
+						<th class="col-md-2">수정 날짜</th>
+						<th class="col-md-2">게시 상태</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="noticeBoard : ${noticeBoardList}">
+						<td th:text="${noticeBoard.idx}"></td>
+						<td><a th:href="'/NoticeBoard?idx='+${noticeBoard.idx}" th:text="${noticeBoard.title}"></a></td>
+						<td>추가 예정</td>
+						<td th:text="${#temporals.format(noticeBoard.createdDate,'yyyy-MM-dd HH:mm')}"></td>
+						<td th:text="${#temporals.format(noticeBoard.updatedDate,'yyyy-MM-dd HH:mm')}"></td>
+						
+						<td th:if="${noticeBoard.postStatus?.name() == 'active'}" th:text="게시중"></td>
+						<td th:if="${noticeBoard.postStatus?.name() == 'inactive'}" th:text="비게시중"></td>
+						<td th:if="${noticeBoard.postStatus?.name() == 'notice'}" th:text="공지사항"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br>
+
+		<!-- Pagination -->
+		<nav aria-label="Page navigation" style="text-align: center;">
+			<ul class="pagination" th:with="startNumber=${T(Math).floor(noticeBoardList.number/10)}*10+1, endNumber=(${noticeBoardList.totalPages} > ${startNumber}+9) ? ${startNumber}+9 : ${noticeBoardList.totalPages}">
+				<li>
+					<a aria-label="Previous" href="/NoticeBoard/list?page=1">&laquo;</a>
+				</li>
+				<li th:style="${noticeBoardList.first} ? 'display:none'">
+					<a th:href="@{/NoticeBoard/list(page=${noticeBoardList.number})}">&lsaquo;</a>
+				</li>
+
+				<li th:each="page :${#numbers.sequence(startNumber, endNumber)}" th:class="(${page} == ${noticeBoardList.number}+1) ? 'active'">
+					<a th:href="@{/NoticeBoard/list(page=${page})}" th:text="${page}"><span class="sr-only"></span></a>
+				</li>
+
+				<li th:style="${noticeBoardList.last} ? 'display:none'">
+					<a th:href="@{/NoticeBoard/list(page=${noticeBoardList.number}+2)}">&rsaquo;</a>
+				</li>
+				<li>
+					<a aria-label="Next" th:href="@{/NoticeBoard/list(page=${noticeBoardList.totalPages})}">&raquo;</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- /Pagination -->
+		
+	</div>
+
+	<!-- footer -->
+	<div th:replace="layout/footer::footer"></div>
+</body>
+</html>
