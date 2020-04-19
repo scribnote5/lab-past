@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
 <title>NoticeBoard List</title>
-
-<link rel="stylesheet" th:href="@{/css/base.css}" />
-<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-
 </head>
 <body>
 	<!-- header -->
@@ -77,5 +75,9 @@
 
 	<!-- footer -->
 	<div th:replace="layout/footer::footer"></div>
+	
+	<!-- script file -->
+	<th:block th:replace="layout/script.html"></th:block>
+	
 </body>
 </html>

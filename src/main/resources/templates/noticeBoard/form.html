@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
 <title>NoticeBoard Form</title>
-
-<link rel="stylesheet" th:href="@{/css/base.css}" />
-<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-
 </head>
 <body>
 	<!-- header -->
@@ -21,7 +18,11 @@
             <h1 th:if="*{idx}">게시글 수정</h1>
         </div>
         <br/>
-        <table class="table">
+        <table class="table" style="table-layout:fixed; word-break:break-all;">
+        	<colgroup>
+			    <col width="15%" />
+			    <col width="85%" />
+			</colgroup>
             <tr>
                 <th style="padding:13px 0 0 15px">게시판 선택</th>
                 <td>
@@ -45,7 +46,9 @@
             </tr>
             <tr>
                 <th style="padding:13px 0 0 15px;">내용</th>
-                <td><textarea name="content" class="col-md-1 form-control input-sm" maxlength="140" rows="7" style="height: 250px;" th:text="*{content}"></textarea></td>
+                <!-- <td><textarea name="content" class="col-md-1 form-control input-sm" maxlength="140" rows="7" style="height: 250px;" th:text="*{content}"></textarea></td> -->
+                <!-- summernote -->
+                <td><textarea name="content" id="summernote" class="summernote" th:text="*{content}"></textarea></td>
             </tr>
             <tr>
                 <td></td>
@@ -73,10 +76,23 @@
     <div th:replace="layout/footer::footer"></div>
 
 	<!-- script file -->
-    <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/jquery.serialize-object.min.js}"></script>
-    
-	<!-- javascript -->   
+	<th:block th:replace="layout/script.html"></th:block>
+  
+	<!-- javascript -->
+	<script>
+	$(document).ready(function() {
+		<!-- summernote setting -->
+		  $('#summernote').summernote({
+			height: 250,	// 에디터 높이
+			minHeight: null,	// 최소 높이
+			maxHeight: null,	// 최대 높이
+			focus: true,	// 에디터 로딩후 포커스를 맞출지 여부
+			lang: "ko-KR",// 한글 설정
+			placeholder: '최대 2048자까지 쓸 수 있습니다.'	//placeholder 설정
+			
+		});
+	});
+	</script>
     <script th:if="!${noticeBoard?.idx}">
    		$('#insert').click(function () {
 	       	var jsonData = $("#form").serializeObject();

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
 <title>NoticeBoard Read</title>
-
-<link rel="stylesheet" th:href="@{/css/base.css}" />
-<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
-
 </head>
 <body>
 	<!-- header -->
@@ -19,7 +17,11 @@
             <h1>게시글 읽기</h1>
         </div>
         <br/>
-        <table class="table">
+        <table class="table" style="table-layout:fixed; word-break:break-all;">
+        	<colgroup>
+			    <col width="15%" />
+			    <col width="85%" />
+			</colgroup>
             <tr>
                 <th style="padding:13px 0 0 15px">게시판 선택</th>
                 <td>
@@ -44,7 +46,7 @@
             </tr>
             <tr>
                 <th style="padding:13px 0 0 15px;">내용</th>
-                <td><span id="content" class="col-md-1 form-control input-sm" style="height: 200px;" th:text="*{content}"></span></td>
+                <td><span id="content" class="col-md-1 form-control input-sm" style="height: 250px; overflow: auto" th:text="*{content}"></span></td>
             </tr>
             <tr>
                 <td></td>
@@ -70,8 +72,15 @@
     <div th:replace="layout/footer::footer"></div>
 	
     <!-- script file -->
-    <script th:src="@{/js/jquery.min.js}"></script>
-    <script>
+	<th:block th:replace="layout/script.html"></th:block>
+	
+    <script th:inline="javascript">
+	    $(document).ready(function() {
+	    	/* <![CDATA[ */	  
+	    	document.getElementById("content").innerHTML = /*[[${noticeBoard.content}]]*/;
+	    	/* ]]> */
+		});
+	    
     	$('#delete').click(function () {
         	if(confirm("삭제 하시겠습니까?")) { 
         		$.ajax({
