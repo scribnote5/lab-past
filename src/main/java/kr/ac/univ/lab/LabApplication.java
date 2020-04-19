@@ -19,13 +19,20 @@ import kr.ac.univ.lab.repository.NoticeBoardRepository;
 
 @RestController
 @SpringBootApplication
-public class LabApplication {	
+public class LabApplication {
+	private static final Logger logger = LoggerFactory.getLogger(LabApplication.class);
+	
 	public static void main(String[] args) {
 		SpringApplication.run(LabApplication.class, args);
 	}
 
 	@GetMapping("/")
 	public String Home() {
+		logger.trace("Hello world");
+	    logger.debug("Hello world");
+	    logger.info("Hello world");
+	    logger.warn("Hello world");
+	    logger.error("Hello world");
 		
 		return "Hello World";
 	}
