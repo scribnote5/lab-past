@@ -1,52 +1,67 @@
 spring:
-   jpa:
-    # hibernate:
-      # ddl-auto: create
-    # h2:
-      # console:
-         # enabled: true
-         # path: /console
-   devtools:
-      livereload:
-         enabled: true
-   thymeleaf:
-      cache: false
+    devtools:
+        livereload:
+            enabled: true
+    thymeleaf:
+        cache: false
 ---
 spring:
-   profiles: local
-   datasource:
-      # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
-      url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/test
-      # 개인 아이디로 변경 필요
-      username: scribnote5
-      # 개인 비밀번호로 변경 필요
-      password: 123123123
-      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    profiles: test
+    jpa:
+        hibernate:
+            ddl-auto: create
+    h2:
+        console:
+            enabled: true
+            path: /console  
+    datasource:
+        # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요, 메인 메모리를 저장 장소로 사용(휘발성)
+        url: jdbc:h2:mem:test;MODE=mysql;
+        # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요, File을 저장 장소로 사용(비휘발성)
+        # url: jdbc:h2:file:~/data/h2/testdb;MODE=MySQL
+        # 개인 아이디로 변경 필요
+        username: scribnote5
+        # 개인 비밀번호로 변경 필요
+        password: 123123123
+        driver-class-name: org.h2.Driver
 server:
    port: 8080
 ---
 spring:
-   profiles: dev
-   datasource:
-      # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
-      url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/test
-      # 개인 아이디로 변경 필요
-      username: scribnote5
-      # 개인 비밀번호로 변경 필요
-      password: 123123123
-      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    profiles: local
+    datasource:
+        # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
+        url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/test
+        # 개인 아이디로 변경 필요
+        username: scribnote5
+        # 개인 비밀번호로 변경 필요
+        password: 123123123
+        driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+server:
+   port: 8080
+---
+spring:
+    profiles: dev
+    datasource:
+        # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
+        url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/test
+        # 개인 아이디로 변경 필요
+        username: scribnote5
+        # 개인 비밀번호로 변경 필요
+        password: 123123123
+        driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
 server:
    port: 8081
 ---
 spring:
-   profiles: real
-   datasource:
-      # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
-      url: jdbc:mariadb://127.0.0.1:3306/test
-      # 개인 아이디로 변경 필요
-      username: scribnote5
-      # 개인 비밀번호로 변경 필요
-      password: 123123123
-      driver-class-name: org.mariadb.jdbc.Driver
+    profiles: real
+    datasource:
+        # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
+        url: jdbc:mariadb://127.0.0.1:3306/test
+        # 개인 아이디로 변경 필요
+        username: scribnote5
+        # 개인 비밀번호로 변경 필요
+        password: 123123123
+        driver-class-name: org.mariadb.jdbc.Driver
 server:
    port: 8082

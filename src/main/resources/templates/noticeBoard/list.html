@@ -23,11 +23,12 @@
 				<thead>
 					<tr>
 						<th class="col-md-1">idx</th>
-						<th class="col-md-4">제목</th>
-						<th class="col-md-2">글쓴이</th>
+						<th class="col-md-3">제목</th>
+						<th class="col-md-1">글쓴이</th>
 						<th class="col-md-2">작성 날짜</th>
 						<th class="col-md-2">수정 날짜</th>
-						<th class="col-md-2">게시 상태</th>
+						<th class="col-md-1">게시 상태</th>
+						<th class="col-md-1">조회수</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -41,6 +42,8 @@
 						<td th:if="${noticeBoard.postStatus?.name() == 'active'}" th:text="게시중"></td>
 						<td th:if="${noticeBoard.postStatus?.name() == 'inactive'}" th:text="비게시중"></td>
 						<td th:if="${noticeBoard.postStatus?.name() == 'notice'}" th:text="공지사항"></td>
+						
+						<td th:text="${noticeBoard.viewCount}"></td>
 					</tr>
 				</tbody>
 			</table>
