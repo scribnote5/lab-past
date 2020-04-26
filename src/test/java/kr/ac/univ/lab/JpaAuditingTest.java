@@ -1,12 +1,11 @@
 package kr.ac.univ.lab;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import kr.ac.univ.lab.repository.NoticeBoardRepositoryImpl;
 @SpringBootTest
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
-public class QuerydslTest {
+public class JpaAuditingTest {
 	@Autowired
 	NoticeBoardRepository noticeBoardRepository;
 
@@ -42,37 +41,16 @@ public class QuerydslTest {
 				.build()));
 	}
 
-	
 	@Test
-	@DisplayName("Querydsl로 구현한 findByTitle 테스트")  
+	@DisplayName("JPA Auditing 테스트")  
 	public void Test() {
-		List<NoticeBoard> list = noticeBoardRepositoryImpl.findByTitle("게시글1");
+		List<NoticeBoard> list = noticeBoardRepository.findAll();
 
+		LocalDateTime pastDateTime = LocalDateTime.of(2020,4,26,0,0,0,0);
+		
+		// 새로 생성한 게시글이 과거 시간 이후에 생성되어 있는지 확인한다.
 		for (NoticeBoard noticeboard : list) {
-			assertEquals(noticeboard.getTitle(), "게시글1");
+			Assert.assertEquals(noticeboard.getCreatedDate().isAfter(pastDateTime), true);
 		}
-	}
-	
-	@Test
-	@DisplayName("Querydsl로 구현한 updateViewCountByIdx 테스트")  
-	public void Test2() {
-		// update된 column 개수 반환
-		Long cnt = noticeBoardRepositoryImpl.updateViewCountById(1L);
-		assertEquals(cnt, 1);
-	}
-	
-	@Test
-	@DisplayName("JPA findById를 사용한 viewCount 테스트")  
-	public void Test3() {
-		Optional<NoticeBoard> optionalNoticeBoard = noticeBoardRepository.findById(1L);
-		NoticeBoard noticeBoard = null;
-		
-		if (optionalNoticeBoard .isPresent()) {
-		    noticeBoard = optionalNoticeBoard.get();
-		}
-		
-		// idx 1인 column을 조회한다.
-		assertEquals(noticeBoard.getId(), 1L);
-		assertEquals(noticeBoard.getViewCount(), 1L);
 	}
 }

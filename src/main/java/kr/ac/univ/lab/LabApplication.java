@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import kr.ac.univ.lab.domain.NoticeBoard;
 import kr.ac.univ.lab.domain.enums.PostStatus;
 import kr.ac.univ.lab.repository.NoticeBoardRepository;
 
+@EnableJpaAuditing
 @RestController
 @SpringBootApplication
 public class LabApplication {
@@ -48,8 +50,7 @@ public class LabApplication {
 					.content("컨텐츠")
 					.viewCount(0L)
 					.postStatus(PostStatus.active)
-					.createdDate(LocalDateTime.now())
-					.updatedDate(LocalDateTime.now()).build()));
+					.build()));
 		};
 	}
 }

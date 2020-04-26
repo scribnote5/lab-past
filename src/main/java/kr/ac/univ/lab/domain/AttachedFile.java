@@ -4,10 +4,14 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +23,7 @@ import lombok.ToString;
 @Entity
 @Table
 @ToString
+@EntityListeners(AuditingEntityListener.class)
 public class AttachedFile {
 	@Id
 	@Column
@@ -38,18 +43,17 @@ public class AttachedFile {
 	private Long downloadCount;
 	
 	@Column
+	@CreatedDate
 	private LocalDateTime createdDate;
 	
 	@Column
 	private String memberId;
 
 	@Builder
-	public AttachedFile(Long boardId, String savedFileName, Long fileSize, LocalDateTime createdDate, String memberId) {
+	public AttachedFile(Long boardId, String savedFileName, Long fileSize, String memberId) {
 		this.boardId = boardId;
 		this.savedFileName = savedFileName;
 		this.fileSize = fileSize;
-		this.createdDate = createdDate;
 		this.memberId = memberId;
 	}
-	
 }

@@ -77,7 +77,6 @@ public class AttachedFileService {
 						.boardId(boardId)
 						.savedFileName(savedFileName)
 						.fileSize(file.getSize())
-						.createdDate(LocalDateTime.now())
 						.build();
 
 				insertUploadFile(uploadFile);

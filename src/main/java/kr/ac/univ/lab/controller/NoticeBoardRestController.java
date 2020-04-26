@@ -34,7 +34,6 @@ public class NoticeBoardRestController {
 
 	@PostMapping
 	public ResponseEntity<?> postNoticeBoard(@RequestBody NoticeBoard noticeBoard) {
-		noticeBoard.setCreatedDateNow();
 		Long id = noticeBoardSerive.insertNoticeBoard(noticeBoard);
 
 		return new ResponseEntity<>(id, HttpStatus.CREATED);
