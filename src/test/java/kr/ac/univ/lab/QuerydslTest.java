@@ -59,7 +59,7 @@ public class QuerydslTest {
 	@DisplayName("Querydsl로 구현한 updateViewCountByIdx 테스트")  
 	public void Test2() {
 		// update된 column 개수 반환
-		Long cnt = noticeBoardRepositoryImpl.updateViewCountByIdx(1L);
+		Long cnt = noticeBoardRepositoryImpl.updateViewCountById(1L);
 		assertEquals(cnt, 1);
 	}
 	
@@ -74,7 +74,7 @@ public class QuerydslTest {
 		}
 		
 		// idx 1인 column을 조회한다.
-		assertEquals(noticeBoard.getIdx(), 1L);
+		assertEquals(noticeBoard.getId(), 1L);
 		assertEquals(noticeBoard.getViewCount(), 1L);
 	}
 }

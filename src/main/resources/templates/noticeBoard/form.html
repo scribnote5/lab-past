@@ -5,6 +5,15 @@
 <th:block th:replace="layout/css.html"></th:block>
 
 <title>NoticeBoard Form</title>
+
+<style>
+    .fileDrop {
+        width: 400px;
+        height: 100px;
+        border: 1px dotted blue;
+    }
+</style>
+
 </head>
 <body>
 	<!-- header -->
@@ -14,8 +23,8 @@
     	<form id="form" th:object="${noticeBoard}" action="#"  >
     
         <div class="page-header">
-            <h1 th:if="!*{idx}">게시글 등록</h1>
-            <h1 th:if="*{idx}">게시글 수정</h1>
+            <h1 th:if="!*{id}">게시글 등록</h1>
+            <h1 th:if="*{id}">게시글 수정</h1>
         </div>
         <br/>
         <table class="table" style="table-layout:fixed; word-break:break-all;">
@@ -36,7 +45,7 @@
                     </div>
                 </td>
             </tr>
-            <tr th:if="*{idx}">
+            <tr th:if="*{id}">
                 <th style="padding:13px 0 0 15px;">생성 날짜</th>
                 <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(createdDate,'yyyy-MM-dd HH:mm')}"/></td>
             </tr>
@@ -51,22 +60,39 @@
                 <td><textarea name="content" id="summernote" class="summernote" th:text="*{content}"></textarea></td>
             </tr>
             <tr>
+                <th style="padding:13px 0 0 15px;">파일</th>
+                <td><input type="file" multiple="multiple" name="file" id="file"/></td>
+                <!-- <td><input type="file" name="file"/></td> -->
+            </tr>
+            <tr>
                 <td></td>
                 <td></td>
             </tr>
             
         </table>
         
+        <!-- 파일을 업로드할 영역 -->
+	    <div id="fileDrop" class="fileDrop"></div>
+	    <!-- 업로드된 파일 목록 -->
+	    <div id="attachedFileList"> </div>
+        <div id="attachedFileList" th:each="attachedFile : ${attachedFileList}" > 
+        	<div th:id="imgData + ${attachedFileStat.index}" >
+		    	<span th:attr="onclick=|downloadFile('${attachedFile.savedFileName}')|" th:text=" ${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;&nbsp;&nbsp; 파일 크기' + ${attachedFile.fileSize}"></span>
+	    		<img th:attr="src=@{|/images/cancel.jpg|}, onclick=|deleteFile('${attachedFileStat.index}','${attachedFile.id}','${attachedFile.savedFileName}')|" th:style="'width: 15px; height: 15px'" />
+	    	</div>	
+	    </div>
+	    <br/> 
+        
         <div class="pull-left">
             <a href="/NoticeBoard/list" class="btn btn-default">목록으로</a>
         </div>
         <div class="pull-right">
-            <button th:if="!*{idx}" id="insert" type="button" class="btn btn-primary">저장</button>
-            <button th:if="*{idx}" id="update" type="button" class="btn btn-info">수정완료</button>
+            <button th:if="!*{id}" id="insert" type="button" class="btn btn-primary">저장</button>
+            <button th:if="*{id}" id="update" type="button" class="btn btn-info">수정완료</button>
         </div>
         
         <!-- input type="hidden" -->
-		<input type="hidden" name="idx" th:value="*{idx}"/>
+		<input type="hidden" name="id" th:value="*{id}"/>
 	    <input type="hidden" name="createdDate" th:value="*{createdDate}"/>
 	    
 	    </form>
@@ -80,6 +106,9 @@
   
 	<!-- javascript -->
 	<script>
+	var fileArray = [];
+	var imgDataId = 0;
+	
 	$(document).ready(function() {
 		<!-- summernote setting -->
 		  $('#summernote').summernote({
@@ -91,48 +120,197 @@
 			placeholder: '최대 2048자까지 쓸 수 있습니다.'	//placeholder 설정
 			
 		});
+		  
+	  	<!-- File Drop -->
+		$("#fileDrop").on("dragenter dragover", function(event){
+	        event.preventDefault(); // 기본 효과를 막음
+	    });
 	});
+	
+	/* input tag event */
+	$('#file').change(function () {
+		var files = document.getElementsByName("file")[0].files;	
+
+		for (var i = 0; i < files.length; i++) {
+        	console.log("file: " + files[i].name);
+        	
+        	fileArray.push(files[i]);
+        	        	
+			$("#attachedFileList").append('<div id="imgData' + imgDataId + '">' 
+					   + '<span>' 
+					   + files[i].name + "&nbsp;&nbsp;&nbsp;&nbsp; 파일 크기: " + files[i].size  
+					   + '<img src="/images/cancel.jpg" style="width: 15px; height: 15px" onClick="cancelFile(' + imgDataId + ')" />' 
+					   + '</span>'
+					   + '</div>');
+			
+			imgDataId++;
+		}
+	});
+	
+	/* Drag & drop event */
+	$("#fileDrop").on("drop", function(event){
+        event.preventDefault(); // 기본 효과를 막음
+        // 드래그된 파일의 정보
+        // event : jQuery의 이벤트
+     	// originalEvent : javascript의 이벤트
+        var files = event.originalEvent.dataTransfer.files;
+	
+        for (var i = 0; i < files.length; i++) {
+        	fileArray.push(files[i]);
+        	        	
+        	$("#attachedFileList").append('<div id="imgData' + imgDataId + '">' 
+					   + '<span>' 
+					   + files[i].name + "&nbsp;&nbsp;&nbsp;&nbsp; 파일 크기: " + files[i].size  
+					   + '<img src="/images/cancel.jpg" style="width: 15px; height: 15px" onClick="cancelFile(' + imgDataId + ')" />' 
+					   + '</span>'
+					   + '</div>');
+        	
+        	imgDataId++;
+        }
+	});
+	
+	function cancelFile(fileId) {
+		$('#imgData' + fileId).remove();
+		
+		fileArray[fileId] = null; 
+	}
+	
+	function deleteFile(fileId, id, savedFileName) {
+		$('#imgData' + fileId).remove();
+		
+		$.ajax({
+			url: "/api/AttachedFile/Delete/" + id + "/" + savedFileName,
+			type: "post",
+			data: id,
+			dataType: "text",
+			contentType: "application/json",
+                      
+            success: function(){
+                                
+            },
+            error: function () {
+                alert('저장 실패!');
+           	}
+    	}); 
+	}
+	
+	function downloadFile(savedFileName) {   	
+    	$.ajax({
+            url: "/api/AttachedFile/Download/" + savedFileName,
+            type: "POST",
+            dataType: "text",
+            contentType: "application/json",
+            
+            success: function(data) {
+            	var blob = new Blob([data]);
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = savedFileName.split('_')[1];
+                link.click();
+            },
+            error: function () {
+            	alert('다운로드 실패!');
+            }
+        });
+    }
+	
 	</script>
-    <script th:if="!${noticeBoard?.idx}">
+    <script th:if="!${noticeBoard?.id}">
    		$('#insert').click(function () {
-	       	var jsonData = $("#form").serializeObject();
-	       
+   			// 게시글 업로드
+   			var jsonData = $("#form").serializeObject();
+ 	       	var boardId;
+ 	       	
             $.ajax({
 				url: "/api/NoticeBoards",
 				type: "POST",
                 data: JSON.stringify(jsonData),
 				dataType: "text",
 				contentType: "application/json",
+				async: false,
 				
-                success: function () {
-                    alert('저장 성공!');
-                    location.href = '/NoticeBoard/list';
+                success: function (msg) {
+                	boardId = msg;                    
               	},
                 error: function () {
                     alert('저장 실패!');
                	}
 			});
+   			
+            // 파일 업로드
+   			var formData = new FormData();
+   			
+   			for(var i = 0; i < fileArray.length; i++) {
+   				formData.append("files", fileArray[i]);
+   			}
+   			
+   			formData.append("id", boardId);
+   		   			
+			$.ajax({
+				url: "/api/AttachedFile/Upload",
+				type: "post",
+				data: formData,
+				dataType: "text",
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	                      
+	            success: function(msg){
+	                location.href = '/NoticeBoard/list';
+	            },
+                error: function () {
+                    alert('저장 실패!');
+               	}
+        	}); 
    		});
     </script>
-    <script th:if="${noticeBoard?.idx}">
+    <script th:if="${noticeBoard?.id}">
     	$('#update').click(function () {
         	var jsonData = $("#form").serializeObject();
+        	var id = document.getElementsByName('id')[0].value;
         	
             $.ajax({
-                url: "/api/NoticeBoards/" + document.getElementsByName('idx')[0].value,
+                url: "/api/NoticeBoards/" + document.getElementsByName('id')[0].value,
                 type: "PUT",
                 data: JSON.stringify(jsonData),
                 dataType: "text",
                 contentType: "application/json",
+                async: false,
                 
                 success: function () {
-                    alert('수정 성공!');
-                    location.href = '/NoticeBoard?idx=' + document.getElementsByName('idx')[0].value;
+                    
                 },
                 error: function () {
                     alert('수정 실패!');
                 }
             });
+         
+         	// 파일 업로드
+   			var formData = new FormData();
+   			console.log(fileArray.length);
+   			
+   			for(var i = 0; i < fileArray.length; i++) {
+   				formData.append("files", fileArray[i]);
+   			}
+   			
+   			formData.append("id", id);
+   			
+			$.ajax({
+				url: "/api/AttachedFile/Upload",
+				type: "post",
+				data: formData,
+				// dataType: "text",
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	                      
+	            success: function(msg){
+	                location.href = '/NoticeBoard?id=' + document.getElementsByName('id')[0].value;
+	            }, 
+                error: function () {
+                    alert('수정 실패!');
+               	}
+        	}); 
     	});
     </script>
 </body>

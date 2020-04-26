@@ -1,3 +1,4 @@
+
 package kr.ac.univ.lab.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,31 +15,33 @@ import kr.ac.univ.lab.repository.NoticeBoardRepositoryImpl;
 @Service
 public class NoticeBoardService {
 	@Autowired
-    private NoticeBoardRepository noticeBoardRepository;
+	private NoticeBoardRepository noticeBoardRepository;
 
 	@Autowired
-    private NoticeBoardRepositoryImpl noticeBoardRepositoryImpl;
-	
-    public Page<NoticeBoard> findNoticeBoardList(Pageable pageable) {
-        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "createdDate");
-        return noticeBoardRepository.findAll(pageable);
-    }
+	private NoticeBoardRepositoryImpl noticeBoardRepositoryImpl;
 
-    public NoticeBoard findNoticeBoardByIdx(Long idx) {
-    	noticeBoardRepositoryImpl.updateViewCountByIdx(idx); 
-        return noticeBoardRepository.findById(idx).orElse(new NoticeBoard());
-    }    
-    
-    public void insertNoticeBoard(NoticeBoard noticeBoard) {
-    	noticeBoardRepository.save(noticeBoard);
-    }
-    
-    public NoticeBoard getNoticeBoardByIdx(Long idx) {
-    	return noticeBoardRepository.getOne(idx) ;
-    }
+	public Page<NoticeBoard> findNoticeBoardList(Pageable pageable) {
+		pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "createdDate");
+		
+		return noticeBoardRepository.findAll(pageable);
+	}
 
-    public void deleteNoticeBoardById(Long idx) {
-    	noticeBoardRepository.deleteById(idx) ;
-    }
-    
+	public NoticeBoard findNoticeBoardById(Long id) {
+		noticeBoardRepositoryImpl.updateViewCountById(id);
+		
+		return noticeBoardRepository.findById(id).orElse(new NoticeBoard());
+	}
+
+	public Long insertNoticeBoard(NoticeBoard noticeBoard) {
+		return noticeBoardRepository.save(noticeBoard).getId();
+	}
+
+	public NoticeBoard getNoticeBoardById(Long id) {
+		return noticeBoardRepository.getOne(id);
+	}
+
+	public void deleteNoticeBoardById(Long id) {
+		noticeBoardRepository.deleteById(id);
+	}
+
 }

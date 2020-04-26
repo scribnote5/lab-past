@@ -23,7 +23,9 @@ public class QNoticeBoard extends EntityPathBase<NoticeBoard> {
 
     public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
 
-    public final NumberPath<Long> idx = createNumber("idx", Long.class);
+    public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final StringPath memberId = createString("memberId");
 
     public final EnumPath<kr.ac.univ.lab.domain.enums.PostStatus> postStatus = createEnum("postStatus", kr.ac.univ.lab.domain.enums.PostStatus.class);
 

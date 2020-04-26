@@ -2,8 +2,6 @@ package kr.ac.univ.lab.repository;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -30,24 +28,24 @@ public class NoticeBoardRepositoryImpl extends QuerydslRepositorySupport {
 		 * SELECT *
 		 *   FROM notice_board
 		 *  WHERE title = 'title'
-		*/
+		 */
 		return queryFactory
 				.selectFrom(noticeBoard)
 				.where(noticeBoard.title.eq(title))
 				.fetch();
 	}
 	
-	public long updateViewCountByIdx(Long Idx) {
+	public long updateViewCountById(Long id) {
 		QNoticeBoard noticeBoard = QNoticeBoard.noticeBoard;
 		/*
 		 * UPDATE notice_board
 		 *    SET view_count = view_count + 1 
-		 *  WHERE idx = 'idx';
-		*/
+		 *  WHERE id = 'id';
+		 */
 		return queryFactory
 				.update(noticeBoard)
 				.set(noticeBoard.viewCount, noticeBoard.viewCount.add(1))
-				.where(noticeBoard.idx.eq(Idx))
+				.where(noticeBoard.id.eq(id))
 				.execute();
 	}
 

@@ -4,6 +4,12 @@ spring:
             enabled: true
     thymeleaf:
         cache: false
+    servlet:
+        multipart:
+            file-size-threshold: 1MB
+            location: C:/Temp
+            max-file-size: 100MB
+            max-request-size: 100MB    
 ---
 spring:
     profiles: test
@@ -41,15 +47,15 @@ server:
    port: 8080
 ---
 spring:
-    profiles: dev
+    profiles: real
     datasource:
         # test는 DB 이름으로서 생성한 DB 이름으로 변경 필요
-        url: jdbc:log4jdbc:mariadb://127.0.0.1:3306/test
+        url: jdbc:mariadb://127.0.0.1:3306/test
         # 개인 아이디로 변경 필요
         username: scribnote5
         # 개인 비밀번호로 변경 필요
         password: 123123123
-        driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+        driver-class-name: org.mariadb.jdbc.Driver
 server:
    port: 8081
 ---

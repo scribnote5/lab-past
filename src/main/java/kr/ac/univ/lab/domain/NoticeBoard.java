@@ -15,16 +15,18 @@ import kr.ac.univ.lab.domain.enums.PostStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Table
+@ToString
 public class NoticeBoard {
 	@Id
 	@Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idx;
+	private Long id;
 
 	@Column
 	private String title;
@@ -39,20 +41,24 @@ public class NoticeBoard {
 	@Column
 	private Long viewCount;
 	
-	@Column()
+	@Column
 	private LocalDateTime createdDate;
 	
 	@Column
 	private LocalDateTime updatedDate;
 
+	@Column
+	private String memberId;
+	
 	@Builder
-	public NoticeBoard(String title, String content, PostStatus postStatus, Long viewCount, LocalDateTime createdDate, LocalDateTime updatedDate) {
+	public NoticeBoard(String title, String content, PostStatus postStatus, Long viewCount, LocalDateTime createdDate, LocalDateTime updatedDate, String memberId) {
 		this.title = title;
 		this.content = content;
 		this.viewCount = viewCount;
 		this.postStatus = postStatus;
 		this.createdDate = createdDate;
 		this.updatedDate = updatedDate;
+		this.memberId = memberId;
 	}
 	
 	public void setCreatedDateNow() {
