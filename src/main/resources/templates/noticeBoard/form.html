@@ -20,7 +20,7 @@
     <div th:replace="layout/header::header"></div>
     
     <div class="container">
-    	<form id="form" th:object="${noticeBoard}" action="#"  >
+    	<form name="form" id="form" th:object="${noticeBoardDto}" action="#"  >
     
         <div class="page-header">
             <h1 th:if="!*{id}">게시글 등록</h1>
@@ -36,11 +36,13 @@
                 <th style="padding:13px 0 0 15px">게시판 선택</th>
                 <td>
                     <div class="pull-left">
-                        <select name="postStatus" class="form-control input-sm">
-                            <option>--분류--</option>
-                            <option th:value="active" th:selected="*{postStatus?.name() == 'active'}">게시중</option>
+                        <select name="postStatus" th:field="*{postStatus}" class="form-control input-sm">
+                            <option th:value="ACTIVE">게시중</option>
+                            <option th:value="INACTIVE">비게시중</option>
+                            <option th:value="NOTICE" >공지사항</option>
+                            <!-- <option th:value="active" th:selected="*{postStatus?.name() == 'active'}">게시중</option>
                             <option th:value="inactive" th:selected="*{postStatus?.name() == 'inactive'}">비게시중</option>
-                            <option th:value="notice" th:selected="*{postStatus?.name() == 'notice'}">공지사항</option>
+                            <option th:value="notice" th:selected="*{postStatus?.name() == 'notice'}">공지사항</option> -->
                         </select>
                     </div>
                 </td>
@@ -75,7 +77,7 @@
 	    <div id="fileDrop" class="fileDrop"></div>
 	    <!-- 업로드된 파일 목록 -->
 	    <div id="attachedFileList"> </div>
-        <div id="attachedFileList" th:each="attachedFile : ${attachedFileList}" > 
+        <div id="attachedFileList" th:each="attachedFile : *{attachedFileList}" > 
         	<div th:id="imgData + ${attachedFileStat.index}" >
 		    	<span th:attr="onclick=|downloadFile('${attachedFile.savedFileName}')|" th:text=" ${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;&nbsp;&nbsp; 파일 크기' + ${attachedFile.fileSize}"></span>
 	    		<img th:attr="src=@{|/images/cancel.jpg|}, onclick=|deleteFile('${attachedFileStat.index}','${attachedFile.id}','${attachedFile.savedFileName}')|" th:style="'width: 15px; height: 15px'" />
@@ -215,7 +217,7 @@
     }
 	
 	</script>
-    <script th:if="!${noticeBoard?.id}">
+    <script th:if="!${noticeBoardDto?.id}">
    		$('#insert').click(function () {
    			// 게시글 업로드
    			var jsonData = $("#form").serializeObject();
@@ -264,7 +266,7 @@
         	}); 
    		});
     </script>
-    <script th:if="${noticeBoard?.id}">
+    <script th:if="${noticeBoardDto?.id}">
     	$('#update').click(function () {
         	var jsonData = $("#form").serializeObject();
         	var id = document.getElementsByName('id')[0].value;

@@ -11,12 +11,28 @@
 	<div th:replace="layout/header::header"></div>
 
 	<div class="container">
+		<form name="form" id="form" th:object="${searchDto}" action="#"  >
+	
 		<div class="page-header">
 			<h1>게시글 목록</h1>
 		</div>
+		
 		<div class="pull-right" style="width: 100px; margin: 10px 0;">
-			<a href="/NoticeBoard/form" class="btn btn-primary btn-block">등록</a>
+			<button id="search" type="button" class="btn btn-primary btn-block">검색</button>
 		</div>
+		
+		<div class="pull-right" style="width: 200px; margin: 10px 10px; ">
+			<input type="text" name="keyword" class="col-md-1 form-control input-sm" th:value="${searchDto?.keyword}"/>
+		</div>
+		
+		<div class="pull-right" style="width: 100px; margin: 10px 10px; ">
+			<select name="searchType" th:field="*{searchType}" class="form-control input-sm">
+	            <option th:value="TITLE">재목</option>
+	            <option th:value="CONTENT">내용</option>
+	            <option th:value="MEMBER_ID">글쓴이</option>
+	        </select>
+		</div>
+		
 		<br /> <br /> <br />
 		<div id="mainHide">
 			<table class="table table-hover">
@@ -39,9 +55,9 @@
 						<td th:text="${#temporals.format(noticeBoard.createdDate,'yyyy-MM-dd HH:mm')}"></td>
 						<td th:text="${#temporals.format(noticeBoard.updatedDate,'yyyy-MM-dd HH:mm')}"></td>
 						
-						<td th:if="${noticeBoard.postStatus?.name() == 'active'}" th:text="게시중"></td>
-						<td th:if="${noticeBoard.postStatus?.name() == 'inactive'}" th:text="비게시중"></td>
-						<td th:if="${noticeBoard.postStatus?.name() == 'notice'}" th:text="공지사항"></td>
+						<td th:if="${noticeBoard.postStatus?.name() == 'ACTIVE'}" th:text="게시중"></td>
+						<td th:if="${noticeBoard.postStatus?.name() == 'INACTIVE'}" th:text="비게시중"></td>
+						<td th:if="${noticeBoard.postStatus?.name() == 'NOTICE'}" th:text="공지사항"></td>
 						
 						<td th:text="${noticeBoard.viewCount}"></td>
 					</tr>
@@ -49,6 +65,10 @@
 			</table>
 		</div>
 		<br>
+		
+		<div class="pull-right" style="width: 100px; margin: 10px 0;">
+			<a href="/NoticeBoard/form" class="btn btn-primary btn-block">등록</a>
+		</div>
 
 		<!-- Pagination -->
 		<nav aria-label="Page navigation" style="text-align: center;">
@@ -74,6 +94,7 @@
 		</nav>
 		<!-- /Pagination -->
 		
+		</form>
 	</div>
 
 	<!-- footer -->
@@ -81,5 +102,15 @@
 	
 	<!-- script file -->
 	<th:block th:replace="layout/script.html"></th:block>
+	
+	<script>
+		$('#search').click(function () {
+		
+			document.form.action = '/NoticeBoard/list';
+			document.form.method = 'get';
+			document.form.submit();
+		});
+	</script>
+	
 </body>
 </html>

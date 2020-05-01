@@ -1,9 +1,9 @@
 package kr.ac.univ.lab.domain.enums;
 
 public enum PostStatus {
-	active("active"), 
-	inactive("inactive"),
-	notice("notice");
+	ACTIVE("active"), 
+	INACTIVE("inactive"),
+	NOTICE("notice");
 
 	private String status;
 

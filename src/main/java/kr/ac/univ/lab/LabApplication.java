@@ -49,7 +49,7 @@ public class LabApplication {
 					.title("게시글" + index)
 					.content("컨텐츠")
 					.viewCount(0L)
-					.postStatus(PostStatus.active)
+					.postStatus(PostStatus.ACTIVE)
 					.build()));
 		};
 	}

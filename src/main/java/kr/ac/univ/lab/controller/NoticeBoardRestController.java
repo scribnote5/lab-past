@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,39 +17,47 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import kr.ac.univ.lab.domain.NoticeBoard;
 import kr.ac.univ.lab.domain.AttachedFile;
-import kr.ac.univ.lab.service.NoticeBoardService;
+import kr.ac.univ.lab.domain.NoticeBoard;
 import kr.ac.univ.lab.service.AttachedFileService;
+import kr.ac.univ.lab.service.NoticeBoardService;
 
 @RestController
 @RequestMapping("/api/NoticeBoards")
 public class NoticeBoardRestController {
-	@Autowired
-	private NoticeBoardService noticeBoardSerive;
-
-	@Autowired
-	private AttachedFileService attachedFileService;
+	private final NoticeBoardService noticeBoardService;
+	private final AttachedFileService attachedFileService;
+	
+	public NoticeBoardRestController(NoticeBoardService noticeBoardService, AttachedFileService attachedFileService) {
+        this.noticeBoardService = noticeBoardService;
+        this.attachedFileService = attachedFileService;
+    }
+	
+//	@Autowired
+//	private NoticeBoardService noticeBoardSerive;
+//
+//	@Autowired
+//	private AttachedFileService attachedFileService;
 
 	@PostMapping
 	public ResponseEntity<?> postNoticeBoard(@RequestBody NoticeBoard noticeBoard) {
-		Long id = noticeBoardSerive.insertNoticeBoard(noticeBoard);
+		Long id = noticeBoardService.insertNoticeBoard(noticeBoard);
 
 		return new ResponseEntity<>(id, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> putNoticeBoard(@PathVariable("id") Long id, @RequestBody NoticeBoard noticeBoard) {
-		NoticeBoard persistNoticeBoard = noticeBoardSerive.getNoticeBoardById(id);
+		NoticeBoard persistNoticeBoard = noticeBoardService.getNoticeBoardById(id);
 		persistNoticeBoard.update(noticeBoard);
-		noticeBoardSerive.insertNoticeBoard(persistNoticeBoard);
+		noticeBoardService.insertNoticeBoard(persistNoticeBoard);
 
 		return new ResponseEntity<>("{}", HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteNoticeBoard(@PathVariable("id") Long id) {
-		noticeBoardSerive.deleteNoticeBoardById(id);
+		noticeBoardService.deleteNoticeBoardById(id);
 
 		List<AttachedFile> attachedFileList = attachedFileService.findUploadFileByBoardId(id);
 

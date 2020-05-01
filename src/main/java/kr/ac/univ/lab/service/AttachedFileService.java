@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +17,13 @@ import kr.ac.univ.lab.repository.AttachedFileRepositoryImpl;
 
 @Service
 public class AttachedFileService {
-	@Autowired
-	private AttachedFileRepository attachedFileRepositroy;
-
-	@Autowired
-	private AttachedFileRepositoryImpl attachedFileRepositroyImpl;
+	private final AttachedFileRepository attachedFileRepositroy;
+	private final AttachedFileRepositoryImpl attachedFileRepositroyImpl;
+	
+	public AttachedFileService(AttachedFileRepository attachedFileRepositroy, AttachedFileRepositoryImpl attachedFileRepositroyImpl) {
+        this.attachedFileRepositroy = attachedFileRepositroy;
+        this.attachedFileRepositroyImpl = attachedFileRepositroyImpl;
+    }
 	
 	public AttachedFile findUploadFileById(Long id) {
 		return attachedFileRepositroy.findById(id).orElse(new AttachedFile());

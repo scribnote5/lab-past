@@ -11,7 +11,7 @@
     <div th:replace="layout/header::header"></div>
 
     <div class="container">
-    	<form id="form" th:object="${noticeBoard}" action="#"  >
+    	<form id="form" th:object="${noticeBoardDto}" action="#"  >
     
         <div class="page-header">
             <h1>게시글 읽기</h1>
@@ -26,9 +26,9 @@
                 <th style="padding:13px 0 0 15px">게시판 선택</th>
                 <td>
                     <div class="pull-left">
-                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'active'}" th:text="게시중"> </span>
-                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'inactive'}" th:text="비게시중"> </span>
-                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'notice'}" th:text="공지사항"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'ACTIVE'}" th:text="게시중"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'INACTIVE'}" th:text="비게시중"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'NOTICE'}" th:text="공지사항"> </span>
                     </div>
                 </td>
             </tr>
@@ -55,7 +55,7 @@
         </table>
         
         <!-- 파일 출력 -->
-        <div id="attachedFileList" th:each="attachedFile : ${attachedFileList}">
+        <div id="attachedFileList" th:each="attachedFile : *{attachedFileList}">
 	    	<span th:attr="onclick=|downloadFile('${attachedFile.savedFileName}')|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;&nbsp;&nbsp;' + '파일 크기' + ${attachedFile.fileSize}">
     		</span>
 	    </div>
@@ -84,7 +84,7 @@
     <script th:inline="javascript">
 	    $(document).ready(function() {
 	    	/* <![CDATA[ */	  
-	    	document.getElementById("content").innerHTML = /*[[${noticeBoard.content}]]*/;
+	    	document.getElementById("content").innerHTML = /*[[${noticeBoardDto.content}]]*/;
 	    	/* ]]> */
 		});
 	    
