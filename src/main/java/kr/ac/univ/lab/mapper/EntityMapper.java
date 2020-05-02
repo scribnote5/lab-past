@@ -1,6 +1,10 @@
 package kr.ac.univ.lab.mapper;
 
-public interface EntityMapper <Dto, Entitiy> {
-	Entitiy toEntity(Dto dto);
-    Dto toDto(Entitiy entity);
+import java.util.List;
+
+public interface EntityMapper <Dto, Entity> {
+	Entity toEntity(Dto dto);
+    Dto toDto(Entity entity);
+    List<Entity> toEntityList(List<Dto> dto);
+    List<Dto> toDto(List<Entity> entity);
 }

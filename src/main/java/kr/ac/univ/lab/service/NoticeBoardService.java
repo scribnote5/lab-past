@@ -1,14 +1,19 @@
 
 package kr.ac.univ.lab.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import kr.ac.univ.lab.domain.NoticeBoard;
+import kr.ac.univ.lab.dto.NoticeBoardDto;
 import kr.ac.univ.lab.dto.SearchDto;
+import kr.ac.univ.lab.mapper.NoticeBoardMapper;
 import kr.ac.univ.lab.repository.NoticeBoardRepository;
 import kr.ac.univ.lab.repository.NoticeBoardRepositoryImpl;
 
@@ -22,9 +27,10 @@ public class NoticeBoardService {
         this.noticeBoardRepositoryImpl = noticeBoardRepositoryImpl;
     }
 
-	public Page<NoticeBoard> findNoticeBoardList(Pageable pageable, SearchDto searchDto) {
+	public Page<NoticeBoardDto> findNoticeBoardList(Pageable pageable, SearchDto searchDto) {
 		Page<NoticeBoard> noticeBoardList = null;
-		
+		Page<NoticeBoardDto> noticeBoardDtoList = null;
+				
 		pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "createdDate");
 		
 		switch(searchDto.getSearchType()) {
@@ -42,12 +48,15 @@ public class NoticeBoardService {
 			break;
 		}
 		
-//		for(NoticeBoard noticeBoard : noticeBoardList) {
-//			System.out.println("noticeBoard.getTitle(): " + noticeBoard.getTitle());
-//			System.out.println("noticeBoard.getContent(): " + noticeBoard.getContent());
-//		}
+		// NoticeBoard -> NoticeBoardDto 
+		noticeBoardDtoList = new PageImpl<NoticeBoardDto>(NoticeBoardMapper.INSTANCE.toDto(noticeBoardList.getContent()), pageable, noticeBoardList.getTotalElements());
 		
-		return noticeBoardList;
+		// newIcon 판별
+		for(NoticeBoardDto noticeBoardDto : noticeBoardDtoList) {
+			noticeBoardDto.setNewIcon(isNoticeBoardNew(noticeBoardDto.getCreatedDate()));
+		}
+		
+		return noticeBoardDtoList;
 	}
 
 	public NoticeBoard findNoticeBoardById(Long id) {
@@ -66,6 +75,21 @@ public class NoticeBoardService {
 
 	public void deleteNoticeBoardById(Long id) {
 		noticeBoardRepository.deleteById(id);
+	}
+	
+	public Boolean isNoticeBoardNew(LocalDateTime noticeBoardTime ) {		
+		LocalDateTime currentTime = LocalDateTime.now();
+		// 현재시간과 비교하여 2일 이내에는 newIcon 생성
+		long days = 2;
+		boolean result;
+		
+		if(noticeBoardTime.isAfter(currentTime.minusDays(days))) {
+			result = true;
+		} else {
+			result = false;
+		}
+
+		return result;
 	}
 	
 }

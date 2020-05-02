@@ -56,8 +56,7 @@
         
         <!-- 파일 출력 -->
         <div id="attachedFileList" th:each="attachedFile : *{attachedFileList}">
-	    	<span th:attr="onclick=|downloadFile('${attachedFile.savedFileName}')|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;&nbsp;&nbsp;' + '파일 크기' + ${attachedFile.fileSize}">
-    		</span>
+	    	<span th:attr="onclick=|downloadFile('${attachedFile.savedFileName}')|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;&nbsp;&nbsp;' + '파일 크기' + ${attachedFile.fileSize}"></span>
 	    </div>
 	    <br/>
         

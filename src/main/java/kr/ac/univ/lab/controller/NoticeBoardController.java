@@ -57,8 +57,8 @@ public class NoticeBoardController {
 	// List
 	@GetMapping("/list")
 	public String noticeBoardList(@PageableDefault Pageable pageable, SearchDto searchDto, Model model) {
-		model.addAttribute("noticeBoardList", noticeBoardService.findNoticeBoardList(pageable, searchDto));
-		
+		model.addAttribute("noticeBoardDtoList", noticeBoardService.findNoticeBoardList(pageable, searchDto));
+				
 		return "/noticeBoard/list";
 	}
 }

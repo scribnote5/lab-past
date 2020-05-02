@@ -25,4 +25,5 @@ public class NoticeBoardDto {
 	private LocalDateTime updatedDate;
 	private String memberId;
 	private List<AttachedFile> attachedFileList = new ArrayList<AttachedFile>();
+	private boolean newIcon;
 }
