@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
+<title>Login Form</title>
+
+</head>
+<body>
+	<!-- header -->
+    <div th:replace="layout/header::header"></div>
+    
+    <div class="container" >
+    	<form name="form" id="form" th:object="${memberDto}" action="#"  >
+    
+        <div class="page-header">
+            <h1 th:if="!*{idx}">회원 가입</h1>
+            <h1 th:if="*{idx}">회원 수정</h1>
+        </div>
+        <br/>   
+        <table class="table" style="table-layout:fixed; word-break:break-all;">
+        	<colgroup>
+			    <col width="15%" />
+			    <col width="35%" />
+			    <col width="15%" />
+			    <col width="35%" />
+			</colgroup>
+   
+       	    <tr>
+				<th colspan="2" style="padding:13px 0 13px 15px; text-align: center">기본정보</th>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">아이디</th>
+                <td><input type="text" name="memberId" id="memberId" class="col-md-1 form-control input-sm" th:value="*{memberId}"/></td>
+                <td><button id="validationMemberId" type="button" class="btn btn-primary">아이디 중복 확인</button></td>
+                <td><span id="memberIdCheckResult"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">비밀번호</th>
+                <td><input type="password" name="password" id="password" onchange="validationPassword()" class="col-md-1 form-control input-sm" th:value="*{password}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">비밀번호 확인</th>
+                <td><input type="password" name="checkPassword" id="checkPassword" onchange="validationPassword()" class="col-md-1 form-control input-sm" th:value="*{password}"/></td>
+                <td colspan="2"><span id="passwordCheckResult"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">사진 </th>
+                <td id="imgData">
+                	<input type="file" name="file" id="file"/>
+                	<span th:if="*{idx}">업로드한 이미지 파일: </span>
+                	<span th:if="*{attachedFileList.size()} == 0" th:text="없음"></span>
+                	<a th:if="*{attachedFileList.size()} != 0" th:href="@{|/api/attachedFiles/download/*{attachedFileList[0].savedFileName}|}" th:text="*{#strings.substring(attachedFileList[0].savedFileName,33)}"></a>
+                </td>
+                <td>
+					<img id="imgPreview" th:if="*{attachedFileList.size()} == 0" th:attr="src=@{/images/no_preview_available.jpg}" width="125px" height="125px" />
+					<img id="imgPreview" th:if="*{attachedFileList.size()} != 0" th:attr="src=@{|/api/attachedFiles/download/*{attachedFileList[0].savedFileName}|}" width="125px" height="125px" />
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">이름</th>
+                <td><input type="text" name="koreanName" class="col-md-1 form-control input-sm" th:value="*{koreanName}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">영문 이름</th>
+                <td><input type="text" name="englishName" class="col-md-1 form-control input-sm" th:value="*{englishName}"/></td>
+            </tr>          
+            <tr>
+                <th style="padding:13px 0 0 15px;">성별</th>
+                <td>
+                	남성 <input type="radio" name="gender" th:value="MALE" th:checked="*{gender?.name() == 'MALE' ||  gender?.name() == null}" > 
+      				여성 <input type="radio" name="gender" th:value="FEMALE" th:checked="*{gender?.name() == 'FEMALE'}">
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">생년 월일</th>
+                <td><input type="date" name="birthDate" class="col-md-1 form-control input-sm" th:value="*{birthDate}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">이메일</th>
+                <td><input type="text" name="email" id="email" class="col-md-1 form-control input-sm" th:value="*{email}"/></td>
+                <td colspan="2"><span id="emailCheckResult"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">메신저 아이디</th>
+                <td><input type="text" name="messangerId" class="col-md-1 form-control input-sm" th:value="*{messangerId}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">연락처</th>
+                <td><input type="tel" name="contact" id="contact" class="col-md-1 form-control input-sm" th:value="*{contact}" placeholder="010-xxxx-xxxx로 입력해주세요."/></td>               
+                <td colspan="2"><span id="contactCheckResult"></span></td> 
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">유형</th>
+                <td>
+                	<select name="memberType" th:field="*{memberType}" class="form-control input-sm">
+                        <option th:value="FACULTY">교수</option>
+                        <option th:value="FULL_TIME_PhD">박사 - 풀타임</option>
+                        <option th:value="PART_TIME_PhD">박사 - 파트타임</option>
+                        <option th:value="FULL_TIME_MS">석사 - 풀타임</option>
+                        <option th:value="PART_TIME_MS">석사 - 파트타임</option>
+                        <option th:value="BS">학부연구생</option>
+                    </select>
+                </td>
+            </tr>
+            
+            <tr>
+                <th style="padding:13px 0 0 15px;">상태</th>
+                <td>
+                	<select name="memberStatus" th:field="*{memberStatus}" class="form-control input-sm">
+                        <option th:value="ATTENDING">재학중</option>
+                        <option th:value="GRADUATION">졸업</option>
+                    </select>
+                </td>
+            </tr>
+            
+            <tr>
+                <th style="padding:13px 0 0 15px;">자기소개</th>
+                <!-- summernote -->
+                <td colspan="4"><textarea name="introduction" id="summernote" class="summernote" th:text="*{introduction}"></textarea></td>
+            </tr>
+            
+            
+            <tr>
+				<th colspan="2" style="padding:13px 0 13px 15px; text-align: center">부가정보</th>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">입학일</th>
+                <td><input type="date" name="admissionDate" class="col-md-1 form-control input-sm" th:value="*{admissionDate}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">졸업일</th>
+                <td><input type="date" name="graduationDate" class="col-md-1 form-control input-sm" th:value="*{graduationDate}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">웹페이지</th>
+                <td><input type="text" name="webPage" class="col-md-1 form-control input-sm" th:value="*{webPage}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">직장</th>
+                <td><input type="text" name="workplace" class="col-md-1 form-control input-sm" th:value="*{workplace}"/></td>
+            </tr>
+       
+            
+            
+            <tr>
+				<th colspan="2" style="padding:13px 0 13px 15px; text-align: center">관리자가 수정하는 정보</th>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">활동상태</th>
+                <td>
+					<select name="activeStatus" th:field="*{activeStatus}" class="form-control input-sm">
+                        <option th:value="ACTIVE">활성화</option>
+                        <option th:value="INACTIVE">비활성화</option>
+                    </select>
+				</td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">권한유형</th>
+                <td>
+            	    <select name="permissionType" th:field="*{permissionType}" class="form-control input-sm">
+                        <option th:value="MANAGER">관리자</option>
+                        <option th:value="GENERAL">일반회원</option>
+                        <option th:value="NON_MEMBER">비회원</option>
+                    </select>
+                </td>
+            </tr>
+      
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            
+        </table>
+        <div class="pull-left">
+            <a href="/member/list" class="btn btn-default">목록으로</a>
+        </div>
+        <div class="pull-right">
+            <button th:if="!*{idx}" id="insert" type="button" class="btn btn-primary">저장</button>
+            <button th:if="*{idx}" id="update" type="button" class="btn btn-info">수정완료</button>
+        </div>
+       
+	    <br/> 
+        
+        <!-- input type="hidden" -->
+		<input type="hidden" name="idx" th:value="*{idx}"/>
+	    <input type="hidden" name="createdDate" th:value="*{createdDate}"/>
+	    
+	    </form>
+    </div>
+    
+	<!-- footer -->
+    <div th:replace="layout/footer::footer"></div>
+
+	<!-- script file -->
+	<th:block th:replace="layout/script.html"></th:block>
+  
+	<!-- javascript -->
+	<script th:inline="javascript">
+	var memberIdVaildation = false;
+	var passwordVaildation = false;
+	var emailVaildation = false;
+	var contactVaildation = false;
+	
+	$(document).ready(function() {
+		<!-- summernote setting -->
+		  $('#summernote').summernote({
+			height: 250,	// 에디터 높이
+			minHeight: null,	// 최소 높이
+			maxHeight: null,	// 최대 높이
+			// focus: true,	// 에디터 로딩후 포커스를 맞출지 여부
+			lang: "ko-KR",// 한글 설정
+			placeholder: '최대 2048자까지 쓸 수 있습니다.'	//placeholder 설정
+		});
+	});
+		
+	/* memberId 검사 */
+	$("#memberId").on('change', function(){
+		var memberId = document.getElementsByName('memberId')[0].value;
+    	
+    	if(memberId.length < 6 || memberId.length > 16) {
+    		alert('아이디는 6글자 이상, 16글자 이하만 이용 가능합니다.');
+    		document.getElementById('memberId').value = '';
+	        document.getElementById('memberIdCheckResult').innerHTML='';
+	        
+	        return false;
+    	}
+    	
+    	if(validationSpaceChar(memberId)) {
+    		alert('공백 문자는 불가능합니다.');
+    		document.getElementById('memberId').value = '';
+	        document.getElementById('memberIdCheckResult').innerHTML='';
+	        
+	        return false;
+    	}
+    	
+    	if(validationSpecialChar(memberId)) {
+    		alert('특수 문자는 불가능합니다.');
+    		document.getElementById('memberId').value = '';
+	        document.getElementById('memberIdCheckResult').innerHTML='';
+	        
+	        return false;
+    	}
+    		
+    });
+	
+    /* memberId 중복 검사 */
+    $('#validationMemberId').click(function () { 	
+        $.ajax({
+			url: "/api/members/validation/memberId/" + document.getElementsByName('memberId')[0].value,
+			type: "get",
+			dataType: "text",
+			contentType: "application/json",
+			async: false,
+			
+            success: function (msg) {	
+            	if(msg == 'false') {
+           		  	document.getElementById('memberIdCheckResult').innerHTML='중복되지 않은 아이디입니다.';
+           		 	document.getElementById('memberIdCheckResult').style.color='blue';
+            		memberIdVaildation = true;
+              	} else {
+            		document.getElementById('memberIdCheckResult').innerHTML='이미 사용하고 있는 아이디입니다.';
+           		 	document.getElementById('memberIdCheckResult').style.color='red';
+            		memberIdVaildation = false;
+            	}
+            	
+          	},
+            error: function () {
+                alert('memberId 중복 검사 실패!');
+           	}
+		});
+	});
+	
+    /* passowrd 검사 */
+	function validationPassword() {
+	    var password = document.getElementsByName('password')[0].value;
+	    var checkPassword = document.getElementsByName('checkPassword')[0].value;
+	    
+	    if (password.length >= 6 && password.length <= 16) {
+	    	if(document.getElementById('password').value!='' && document.getElementById('checkPassword').value!='') {
+		        if(document.getElementById('password').value == document.getElementById('checkPassword').value) {
+		            document.getElementById('passwordCheckResult').innerHTML='비밀번호가 일치합니다.';
+		            document.getElementById('passwordCheckResult').style.color='blue';
+		            passwordVaildation = true;
+		        } else {
+		            document.getElementById('passwordCheckResult').innerHTML='비밀번호가 일치하지 않습니다.';
+		            document.getElementById('passwordCheckResult').style.color='red';
+		            passwordVaildation = false;
+		        }
+		    } else {
+		    	passwordVaildation = false;
+		    }
+	    } else {
+	        alert('비밀번호는 6글자 이상, 16글자 이하만 이용 가능합니다.');
+	        document.getElementById('password').value = ''; 
+	        document.getElementById('checkPassword').value = '';
+	        document.getElementById('checkPassword').innerHTML = '';	
+	    }
+	}
+	
+	$("#file").on('change', function(){
+    	if(validationFile(document.getElementsByName("file")[0].files[0])) {
+    		readURL(this);
+    	} else {
+    		$('#imgPreview').attr('src', '/images/no_preview_available.jpg');
+    	}
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+	        var reader = new FileReader();
+	
+	        reader.onload = function (e) {	
+	        	$('#imgPreview').attr('src', e.target.result);
+	     	}
+	
+	        reader.readAsDataURL(input.files[0]);
+        }
+    }
+    
+    /* file 검사 */
+	function validationFile(file) {
+		// 파일 이름 
+		var fileName = file.name;
+		// 파일 확장자명(대문자를 소문자로 변경)
+		var extensionName = fileName.substring( fileName.lastIndexOf(".")).toLowerCase();
+		// 필수 확장자명
+		var necessaryArray = [ ".jpg", ".jpeg", ".png"];
+		// 필수 확장자명 사용 여부 판단
+		var result = false;
+		// 첨부 파일 크기
+		var fileSize = file.size;
+		// 업로드 가능한 파일 크기: 20 MB                                                                                                                           
+		var maxSize = 20 * 1024 * 1024;
+	
+		// 첨부 파일이 있는 경우
+		if (fileName != "") {
+			/* 확장자명 검사 */
+			for (var j = 0; j < necessaryArray.length; j++) {
+				if (extensionName == necessaryArray[j]) {
+					result = true;
+					break;
+				}
+			}
+
+			if (!result) {
+				alert("첨부 파일은 .jpg, .jpeg, .png 확장자만 사용 가능합니다. ");
+				$("#file").replaceWith($("#file").clone(true));
+				$("#file").val('');
+				
+				return false;
+			}
+
+			/* 파일 크기 검사 */
+			if (fileSize > maxSize) {
+				alert("첨부 파일 업로드는 20 MB 크기 이내로  가능합니다.");
+				$("#file").replaceWith($("#file").clone(true));
+				$("#file").val('');
+				
+				return false;
+			}
+		}
+		
+		return true;
+    }
+	
+	/* email 검사 */
+	$("#email").on('change', function(){
+		var regExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        var email = document.getElementsByName('email')[0].value;
+     
+		if(regExp.test(email)) {
+			document.getElementById('emailCheckResult').innerHTML='이메일 형식이 유효합니다.';
+	        document.getElementById('emailCheckResult').style.color='blue';
+        } else {
+        	document.getElementById('emailCheckResult').innerHTML='이메일 형식이 올바르지 않습니다.';
+	        document.getElementById('emailCheckResult').style.color='red';
+	        document.getElementsByName('email')[0].value ='';
+        }
+    });
+	
+	/* 연락처 검사 */
+	$("#contact").on('change', function(){
+		var regExp = /(01[016789])-([1-9]{1}[0-9]{2,3})-([0-9]{4})$/;
+
+        var contact = document.getElementsByName('contact')[0].value;
+    
+		if(regExp.test(contact)) {
+			document.getElementById('contactCheckResult').innerHTML='연락처 형식이 유효합니다.';
+	        document.getElementById('contactCheckResult').style.color='blue';
+			
+        } else {
+        	document.getElementById('contactCheckResult').innerHTML='연락처 형식이 올바르지 않습니다.';
+	        document.getElementById('contactCheckResult').style.color='red';
+	        document.getElementsByName('contact')[0].value ='';
+        }
+    });
+	</script>
+	
+	<script th:if="!${memberDto?.idx}">
+   		$('#insert').click(function () {
+   			// validation 검사 
+   			if(!memberIdVaildation) {
+   				alert("아이디 중복 확인을 진행하세요.");
+   				document.getElementById("memberId").focus();
+   				
+   				return false;
+   			} else if(!passwordVaildation) {
+   				alert("비밀번호를 입력하세요.");
+   				document.getElementById("password").focus();
+   				
+   				return false;
+   			}
+
+   			// 회원 업로드
+   			var jsonData = $("#form").serializeObject();
+ 	       	var idx;
+ 	       	
+            $.ajax({
+				url: "/api/members",
+				type: "post",
+                data: JSON.stringify(jsonData),
+				dataType: "json",
+				contentType: "application/json",
+				async: false,
+				
+                success: function (msg) {	
+                	idx = msg;
+              	},
+                error: function () {
+                    alert('회원 업로드 실패!');
+               	}
+			});
+            
+         	// 파일 업로드
+   			var formData = new FormData();
+     
+   			formData.append("files", document.getElementsByName("file")[0].files[0]);
+   			formData.append("idx", idx);
+   			
+			$.ajax({
+				url: "/api/members/attachedFile",
+				type: "post",
+				data: formData,
+				dataType: "text",
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	                      
+	            success: function(msg){
+                	location.href = '/member/list';
+	            },
+                error: function () {
+                    alert('파일 업로드 실패!');
+               	}
+        	}); 
+   		}); 	
+	</script>	
+	<script th:if="${memberDto?.idx}" th:inline="javascript">
+   		$('#update').click(function () {
+	    	var oriMemberId = [[${memberDto.memberId}]];
+	    	
+   			// validation 검사 
+   	 		if((document.getElementsByName('memberId')[0].value != oriMemberId) && !memberIdVaildation ) {
+   				alert("아이디 중복 확인을 진행하세요.");
+   				document.getElementById("memberId").focus();
+   				   				
+   				return false;
+   			}
+   			
+   			if(document.getElementsByName('password')[0].value != document.getElementsByName('checkPassword')[0].value) {
+   				alert("비밀번호가 다릅니다.");
+   				document.getElementById("password").focus();
+   				
+   				return false;
+   			} 
+   			
+   			// 회원 수정
+   			var jsonData = $("#form").serializeObject();
+ 	       	var idx = document.getElementsByName('idx')[0].value;
+ 	       	
+            $.ajax({
+				url: "/api/members/" + document.getElementsByName('idx')[0].value,
+				type: "put",
+                data: JSON.stringify(jsonData),
+				dataType: "json",
+				contentType: "application/json",
+				async: false,
+				
+                success: function (msg) {
+                	alert("회원 수정 성공");
+              	},
+                error: function () {
+                    alert("회원 수정 실패!");
+               	}
+			});
+            
+            // 만일 첨부 파일이 수정되지 않은 경우 '파일 업로드' 및 '파일 삭제'를 수행하지 않음
+			if(typeof document.getElementsByName("file")[0].files[0] == "undefined") {
+				location.href = '/member?idx=' + document.getElementsByName('idx')[0].value;
+				
+				return true;
+			}
+            
+			// 파일 삭제
+   			$.ajax({
+   				url: "/api/members/attachedFile/" + idx,
+   				type: "delete",
+   				contentType: "application/json",
+   				async: false,
+   				
+   	            success: function(){
+   	            	 
+   	            },
+   	            error: function () {
+   	                alert('파일 삭제 실패!');
+   	           	}
+   	    	});
+				
+   			// 파일 업로드
+   			var formData = new FormData();
+     
+   			formData.append("files", document.getElementsByName("file")[0].files[0]);
+   			formData.append("idx", idx);
+   			
+			$.ajax({
+				url: "/api/members/attachedFile",
+				type: "post",
+				data: formData,
+				dataType: "text",
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	            async: false,
+	                      
+	            success: function(msg){
+	            	location.href = '/member?idx=' + document.getElementsByName('idx')[0].value;  
+	            },
+                error: function () {
+                    alert('파일 업로드 실패!');
+               	}
+        	});
+   		}); 	
+	</script>
+    
+</body>
+</html>

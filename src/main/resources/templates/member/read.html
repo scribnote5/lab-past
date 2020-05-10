@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
+<title>Login Form</title>
+</head>
+<body>
+	<!-- header -->
+    <div th:replace="layout/header::header"></div>
+    
+    <div class="container" >
+    	<form name="form" id="form" th:object="${memberDto}" action="#"  >
+    
+        <div class="page-header">
+            <h1>회원정보</h1>
+        </div>
+        <br/>   
+        <table class="table" style="table-layout:fixed; word-break:break-all;">
+        	<colgroup>
+			    <col width="15%" />
+			    <col width="35%" />
+			    <col width="15%" />
+			    <col width="35%" />
+			</colgroup>
+   
+       	    <tr>
+				<th colspan="2" style="padding:13px 0 13px 15px; text-align: center">기본정보</th>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">아이디</th>
+                
+                <td><span id="memberId" class="col-md-1 form-control input-sm" th:text="*{memberId}"></span></td>
+            </tr>
+            
+            <tr>
+                <th style="padding:13px 0 0 15px;">사진 </th>
+                <td id="imgData">
+                	업로드한 이미지 파일:
+                	<span th:if="*{attachedFileList.size()} == 0" th:text="없음"></span>
+                	<a th:if="*{attachedFileList.size()} != 0" th:href="@{|/api/attachedFiles/download/*{attachedFileList[0].savedFileName}|}" th:text="*{#strings.substring(attachedFileList[0].savedFileName,33)}"></a>
+                </td>
+                <td id="imgPreview">
+	                <img th:if="*{attachedFileList.size()} == 0" th:attr="src=@{/images/no_preview_available.jpg}" width="125px" height="125px" />
+	                <img th:if="*{attachedFileList.size()} != 0" th:attr="src=@{|/api/attachedFiles/download/*{attachedFileList[0].savedFileName}|}" width="125px" height="125px" />
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">이름</th>
+                <td><span id="koreanName" class="col-md-1 form-control input-sm" th:text="*{koreanName}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">영문 이름</th>
+                <td><span id="koreanName" class="col-md-1 form-control input-sm" th:text="*{englishName}"></span></td>
+            </tr>          
+            <tr>
+                <th style="padding:13px 0 0 15px;">성별</th>
+                <td>
+                	<span class="col-md-1 form-control input-sm" th:if="*{gender?.name() == 'MALE'}" th:text="남성"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{gender?.name() == 'FEMALE'}" th:text="여성"> </span>
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">생년 월일</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{birthDate}"> </span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">이메일</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{email}"> </span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">메신저 아이디</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{messangerId}"> </span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">연락처</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{contact}"> </span></td> 
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">유형</th>
+                <td>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberType?.name() == 'FACULTY'}" th:text="교수"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberType?.name() == 'FULL_TIME_PhD'}" th:text="'박사 ' + ' - ' + '풀타임'"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberType?.name() == 'PART_TIME_PhD'}" th:text="'박사 ' + ' - ' + '파트타임'"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberType?.name() == 'FULL_TIME_MS'}" th:text="'석사' + ' - ' + '풀타임'"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberType?.name() == 'PART_TIME_MS'}" th:text="'석사' + '-' + '파트타임'"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberType?.name() == 'BS'}" th:text="학부연구생"> </span>
+                </td>
+            </tr>
+             <tr>
+                <th style="padding:13px 0 0 15px;">상태</th>
+                <td>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberStatus?.name() == 'FACULTY'}" th:text="재학중"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{memberStatus?.name() == 'FULL_TIME_PhD'}" th:text="졸업"> </span>
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">자기소개</th>
+                <!-- summernote -->
+                <td colspan="4"><span id="introduction" class="col-md-1 form-control input-sm" style="height: 250px; overflow: auto" th:text="*{introduction}"></span></td>
+            </tr>
+            
+            
+            <tr>
+				<th colspan="2" style="padding:13px 0 13px 15px; text-align: center">부가정보</th>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">입학일</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{admissionDate}"> </span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">졸업일</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{graduationDate}"> </span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">웹페이지</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{webPage}"> </span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">직장</th>
+                <td><span class="col-md-1 form-control input-sm" th:text="*{workplace}"> </span></td>
+            </tr>
+       
+            
+            
+            <tr>
+				<th colspan="2" style="padding:13px 0 13px 15px; text-align: center">관리자가 수정하는 정보</th>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">활동상태</th>
+                <td>
+                	<span class="col-md-1 form-control input-sm" th:if="*{activeStatus?.name() == 'ACTIVE'}" th:text="활성화"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{activeStatus?.name() == 'INACTIVE'}" th:text="비활성화"> </span>
+				</td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">권한유형</th>
+                <td>
+                	<span class="col-md-1 form-control input-sm" th:if="*{permissionType?.name() == 'MANAGER'}" th:text="관리자"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{permissionType?.name() == 'GENERAL'}" th:text="일반회원"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{permissionType?.name() == 'NON_MEMBER'}" th:text="비회원"> </span>
+                </td>
+            </tr>
+      
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            
+        </table>
+        <div class="pull-left">
+            <a href="/member/list" class="btn btn-default">목록으로</a>
+        </div>
+        <div class="pull-right">
+            <a th:href="'/member/form?idx='+*{idx}" class="btn btn-info"> 수정</a>
+            <button type="button" class="btn btn-danger" id="delete">삭제</button>
+        </div>
+       
+	    <!-- input type="hidden" -->
+		<input type="hidden" name="idx" th:value="*{idx}"/>
+        
+	    </form>
+    </div>
+    
+	<!-- footer -->
+    <div th:replace="layout/footer::footer"></div>
+
+	<!-- script file -->
+	<th:block th:replace="layout/script.html"></th:block>
+  
+	<!-- javascript -->
+	<script th:inline="javascript">
+	    $(document).ready(function() {
+	    	document.getElementById("introduction").innerHTML = [[${memberDto.introduction}]];
+		});
+	    
+    	$('#delete').click(function () {
+    		if(!confirm("삭제 하시겠습니까?")) {
+        		return true;
+        	}
+        	
+    		// 회원 삭제
+       		$.ajax({
+                url: "/api/members/" + document.getElementsByName('idx')[0].value,
+                type: "delete",
+                dataType: "text",
+                contentType: "application/json",
+                
+                success: function () {
+                    alert('회원 삭제 성공!');
+                    location.href = '/member/list';
+                },
+                error: function () {
+                    alert('회원 삭제 실패!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

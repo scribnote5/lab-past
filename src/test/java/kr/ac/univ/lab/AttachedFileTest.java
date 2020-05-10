@@ -22,15 +22,14 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import kr.ac.univ.lab.repository.NoticeBoardRepository;
-import kr.ac.univ.lab.repository.NoticeBoardRepositoryImpl;
+import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardRepository;
+import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardRepositoryImpl;
 
 @SpringBootTest
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
 public class AttachedFileTest {
-	String uuid;
-	String savedFileName;
+	private static final Logger logger = LoggerFactory.getLogger(LabApplication.class);
 	
 	@Autowired
 	NoticeBoardRepository noticeBoardRepository;
@@ -38,6 +37,9 @@ public class AttachedFileTest {
 	@Autowired
 	NoticeBoardRepositoryImpl noticeBoardRepositoryImpl;
 
+	String uuid;
+	String savedFileName;
+	
 	@Before
 	public void init() {
 		uuid = UUID.randomUUID().toString().replaceAll("-", "");

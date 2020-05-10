@@ -26,9 +26,8 @@
                 <th style="padding:13px 0 0 15px">게시판 선택</th>
                 <td>
                     <div class="pull-left">
-                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'ACTIVE'}" th:text="게시중"> </span>
-                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'INACTIVE'}" th:text="비게시중"> </span>
-                        <span class="col-md-1 form-control input-sm" th:if="*{postStatus?.name() == 'NOTICE'}" th:text="공지사항"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{activeStatus?.name() == 'ACTIVE'}" th:text="게시중"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{activeStatus?.name() == 'INACTIVE'}" th:text="비게시중"> </span>
                     </div>
                 </td>
             </tr>
@@ -38,7 +37,7 @@
             </tr>
             <tr>
                 <th style="padding:13px 0 0 15px;">수정날짜</th>
-                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(updatedDate,'yyyy-MM-dd HH:mm')}"/></td>
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(lastModifiedDate,'yyyy-MM-dd HH:mm')}"/></td>
             </tr>
             <tr>
                 <th style="padding:13px 0 0 15px;">제목</th>
@@ -56,20 +55,20 @@
         
         <!-- 파일 출력 -->
         <div id="attachedFileList" th:each="attachedFile : *{attachedFileList}">
-	    	<span th:attr="onclick=|downloadFile('${attachedFile.savedFileName}')|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;&nbsp;&nbsp;' + '파일 크기' + ${attachedFile.fileSize}"></span>
+	    	<span th:attr="onclick=|location.href='/api/attachedFiles/download/${attachedFile.savedFileName}'|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize}"></span>
 	    </div>
 	    <br/>
         
         <div class="pull-left">
-            <a href="/NoticeBoard/list" class="btn btn-default">목록으로</a>
+            <a href="/notice-board/list" class="btn btn-default">목록으로</a>
         </div>
         <div class="pull-right">
-        	<a th:href="'/NoticeBoard/form?id='+*{id}" class="btn btn-info"> 수정</a>
+        	<a th:href="'/notice-board/form?idx='+*{idx}" class="btn btn-info"> 수정</a>
             <button type="button" class="btn btn-danger" id="delete">삭제</button>
         </div>
         
         <!-- input type="hidden" -->
-		<input type="hidden" name="id" th:value="*{id}"/>
+		<input type="hidden" name="idx" th:value="*{idx}"/>
         
         </form>
     </div>
@@ -82,48 +81,29 @@
 	
     <script th:inline="javascript">
 	    $(document).ready(function() {
-	    	/* <![CDATA[ */	  
-	    	document.getElementById("content").innerHTML = /*[[${noticeBoardDto.content}]]*/;
-	    	/* ]]> */
+	    	document.getElementById("content").innerHTML = [[${noticeBoardDto.content}]];
 		});
 	    
-	    function downloadFile(savedFileName) {   	
-	    	$.ajax({
-                url: "/api/AttachedFile/Download/" + savedFileName,
-                type: "POST",
+    	$('#delete').click(function () {
+    		if(!confirm("삭제 하시겠습니까?")) {
+        		return true;
+        	}
+    		
+    		// 게시글 삭제
+       		$.ajax({
+                url: "/api/notice-boards/" + document.getElementsByName('idx')[0].value,
+                type: "delete",
                 dataType: "text",
                 contentType: "application/json",
                 
-                success: function (data) {
-                	var blob = new Blob([data]);
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = savedFileName.split('_')[1];
-                    link.click();
+                success: function () {
+                    alert('게시글 삭제 성공!');
+                    location.href = '/notice-board/list';
                 },
                 error: function () {
-                	alert('다운로드 실패!');
+                    alert('게시글 삭제 실패!');
                 }
             });
-	    }
-	    
-    	$('#delete').click(function () {
-        	if(confirm("삭제 하시겠습니까?")) { 
-        		$.ajax({
-                    url: "/api/NoticeBoards/" + document.getElementsByName('id')[0].value,
-                    type: "DELETE",
-                    dataType: "text",
-                    contentType: "application/json",
-                    
-                    success: function () {
-                        alert('삭제 성공!');
-                        location.href = '/NoticeBoard/list';
-                    },
-                    error: function () {
-                        alert('삭제 실패!');
-                    }
-                });
-        	}
         });
     </script>
 </body>
