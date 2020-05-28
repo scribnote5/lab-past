@@ -16,4 +16,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	Page<Member> findAllByEmailContaining(Pageable pageable, String email);
 	
 	Long countByMemberId(String memberId);
+	
+	Member findByMemberId(String memberId);
 }

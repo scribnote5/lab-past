@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +26,9 @@ import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardRepository;
 @SpringBootApplication
 public class LabApplication {
 	private static final Logger logger = LoggerFactory.getLogger(LabApplication.class);
-	
+	 
+	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	 
 	public static void main(String[] args) {
 		SpringApplication.run(LabApplication.class, args);
 	}
@@ -60,7 +63,7 @@ public class LabApplication {
 			
 			memberRepository.save(Member.builder()
 					.memberId("root")
-					.password("123123123")
+					.password(passwordEncoder.encode("123123123"))
 					.memberType(MemberType.PART_TIME_MS)
 					.permissionType(PermissionType.ROOT)
 					.activeStatus(ActiveStatus.ACTIVE)
@@ -68,7 +71,7 @@ public class LabApplication {
 			
 			memberRepository.save(Member.builder()
 					.memberId("manager")
-					.password("123123123")
+					.password(passwordEncoder.encode("123123123"))
 					.memberType(MemberType.PART_TIME_MS)
 					.permissionType(PermissionType.MANAGER)
 					.activeStatus(ActiveStatus.ACTIVE)
@@ -77,7 +80,7 @@ public class LabApplication {
 			
 			memberRepository.save(Member.builder()
 				.memberId("sdy")
-				.password("123123123")
+				.password(passwordEncoder.encode("123123123"))
 				.memberType(MemberType.PART_TIME_MS)
 				.permissionType(PermissionType.GENERAL)
 				.activeStatus(ActiveStatus.ACTIVE)

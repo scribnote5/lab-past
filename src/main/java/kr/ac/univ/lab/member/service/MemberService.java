@@ -1,21 +1,33 @@
 
 package kr.ac.univ.lab.member.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.ac.univ.lab.common.dto.SearchDto;
 import kr.ac.univ.lab.member.domian.Member;
+import kr.ac.univ.lab.member.domian.enums.PermissionType;
 import kr.ac.univ.lab.member.dto.MemberDto;
 import kr.ac.univ.lab.member.mapper.MemberMapper;
 import kr.ac.univ.lab.member.repository.MemberRepository;
 
 @Service
-public class MemberService {
+public class MemberService implements UserDetailsService {
 	private final MemberRepository memberRepository;
 	
 	public MemberService(MemberRepository memberRepository) {
@@ -49,6 +61,41 @@ public class MemberService {
 		return memberDtoList;
 	}
 	
+	@Transactional
+    public Long joinUser(MemberDto memberDto) {
+        // 비밀번호 암호화
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
+
+        return memberRepository.save(MemberMapper.INSTANCE.toEntity(memberDto)).getIdx();
+    }
+	
+	@Override
+	public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
+		Member member = memberRepository.findByMemberId(memberId);
+		List<GrantedAuthority> authorities = new ArrayList<>();
+
+		switch (member.getPermissionType()) {
+		case ROOT:
+			authorities.add(new SimpleGrantedAuthority(PermissionType.ROOT.getPermissionType()));
+			break;
+		case MANAGER:
+			authorities.add(new SimpleGrantedAuthority(PermissionType.MANAGER.getPermissionType()));
+			break;
+		case GENERAL:
+			authorities.add(new SimpleGrantedAuthority(PermissionType.GENERAL.getPermissionType()));
+			break;
+		case NON_MEMBER:
+			authorities.add(new SimpleGrantedAuthority(PermissionType.NON_MEMBER.getPermissionType()));
+			break;
+		default:
+			break;
+		}
+		
+		return new User(member.getMemberId(), member.getPassword(), authorities);
+	}
+	
+	
 	public Long insertMember(Member member) {
 		return memberRepository.save(member).getIdx();
 	}
@@ -66,8 +113,6 @@ public class MemberService {
 	}	
 
 	public boolean findDupulicateMemberById(String memberId) {
-		System.out.println("memberRepositoryImpl.findCountByMemberId(memberId): " + memberRepository.countByMemberId(memberId));
-		
 		boolean isDuplicateMemberId = (memberRepository.countByMemberId(memberId) > 0) ? true : false ;
 		
 		return isDuplicateMemberId;

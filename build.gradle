@@ -45,6 +45,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.data:spring-data-rest-hal-browser'
 	
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	
 	implementation 'org.projectlombok:lombok' // lombok
 	implementation 'com.querydsl:querydsl-jpa' // querydsl 
     implementation 'com.querydsl:querydsl-apt' // querydsl

@@ -12,7 +12,7 @@ public enum PermissionType {
 		this.type = type;
 	}
 
-	public String getSearchType() {
+	public String getPermissionType() {
 		return this.type;
 	}
 }

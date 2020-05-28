@@ -32,7 +32,8 @@ public class MemberRestController {
 
 	@PostMapping
 	public ResponseEntity<?> postMember(@RequestBody MemberDto memberDto) {
-		Long idx = memberService.insertMember(MemberMapper.INSTANCE.toEntity(memberDto));
+//		Long idx = memberService.insertMember(MemberMapper.INSTANCE.toEntity(memberDto));
+		Long idx = memberService.joinUser(memberDto);
 		
 		return new ResponseEntity<>(idx, HttpStatus.CREATED);
 	}
