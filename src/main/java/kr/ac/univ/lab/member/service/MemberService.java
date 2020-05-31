@@ -23,6 +23,7 @@ import kr.ac.univ.lab.common.dto.SearchDto;
 import kr.ac.univ.lab.member.domian.Member;
 import kr.ac.univ.lab.member.domian.enums.PermissionType;
 import kr.ac.univ.lab.member.dto.MemberDto;
+import kr.ac.univ.lab.member.dto.UserDto;
 import kr.ac.univ.lab.member.mapper.MemberMapper;
 import kr.ac.univ.lab.member.repository.MemberRepository;
 
@@ -71,9 +72,15 @@ public class MemberService implements UserDetailsService {
     }
 	
 	@Override
-	public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {		
 		Member member = memberRepository.findByMemberId(memberId);
 		List<GrantedAuthority> authorities = new ArrayList<>();
+		
+		boolean enabled = true; 
+		boolean accountNonExpired = true; 
+		boolean credentialsNonExpired = true; 
+		boolean accountNonLocked = true;
+
 
 		switch (member.getPermissionType()) {
 		case ROOT:
@@ -92,7 +99,16 @@ public class MemberService implements UserDetailsService {
 			break;
 		}
 		
-		return new User(member.getMemberId(), member.getPassword(), authorities);
+		return new UserDto(member.getMemberId(), 
+						   member.getPassword(), 
+						   enabled, 
+						   accountNonExpired, 
+						   credentialsNonExpired, 
+						   accountNonLocked, 
+						   authorities, 
+						   member.getIdx(), 
+						   member.getKoreanName(), 
+						   member.getEnglishName());
 	}
 	
 	
@@ -116,5 +132,9 @@ public class MemberService implements UserDetailsService {
 		boolean isDuplicateMemberId = (memberRepository.countByMemberId(memberId) > 0) ? true : false ;
 		
 		return isDuplicateMemberId;
+	}
+	
+	public Member findByMemberId(String memberId) {
+		return memberRepository.findByMemberId(memberId);
 	}
 }

@@ -2,7 +2,11 @@ package kr.ac.univ.lab.member.dto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import kr.ac.univ.lab.common.domain.enums.ActiveStatus;
 import kr.ac.univ.lab.common.dto.CommonDto;

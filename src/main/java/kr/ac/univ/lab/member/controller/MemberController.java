@@ -2,6 +2,8 @@ package kr.ac.univ.lab.member.controller;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.ac.univ.lab.common.dto.SearchDto;
 import kr.ac.univ.lab.member.dto.MemberDto;
+import kr.ac.univ.lab.member.dto.UserDto;
 import kr.ac.univ.lab.member.mapper.MemberMapper;
 import kr.ac.univ.lab.member.service.MemberAttachedFileService;
 import kr.ac.univ.lab.member.service.MemberService;
@@ -47,7 +50,30 @@ public class MemberController {
 
 	// Read
 	@GetMapping({ "", "/" })
-	public String noticeBoardRead(@RequestParam(value = "idx", defaultValue = "0") Long idx, Model model) {
+	public String noticeBoardRead(@RequestParam(value = "idx", defaultValue = "0") Long idx, @AuthenticationPrincipal UserDto userDto, Model model) {
+		// 일반 회원이 다른 회원의 정보에 접근하는 경우
+		for(GrantedAuthority grantedAuthority : userDto.getAuthorities()) {
+			System.out.println("grantedAuthority.getAuthority(): " + grantedAuthority.getAuthority());
+			
+			switch(grantedAuthority.getAuthority()) {
+			case "root":
+				break;
+			case "manager":
+				break;	
+			case "general":
+				System.out.println("userDto.getIdx(): " + userDto.getIdx());
+				System.out.println("idx: " + idx);
+				System.out.println(userDto.getIdx() != idx);
+				
+				if(userDto.getIdx() != idx) {
+					
+					return "/login/denied";
+				}
+				
+				break;	
+			}
+		}
+		
 		MemberDto memberDto;
 		memberDto = MemberMapper.INSTANCE.toDto(memberService.findMemberByIdx(idx));
 		memberDto = MemberMapper.INSTANCE.toDto(memberDto, memberAttachedFileService.findAttachedFileByMemberIdx(idx));
