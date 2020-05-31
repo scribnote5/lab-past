@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,35 +17,24 @@ public class QAttachedFileAudit extends EntityPathBase<AttachedFileAudit> {
 
     private static final long serialVersionUID = -1813710896L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QAttachedFileAudit attachedFileAudit = new QAttachedFileAudit("attachedFileAudit");
 
-    public final kr.ac.univ.lab.member.domian.QMember createdBy;
+    public final StringPath createdBy = createString("createdBy");
 
     public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> idx = createNumber("idx", Long.class);
 
     public QAttachedFileAudit(String variable) {
-        this(AttachedFileAudit.class, forVariable(variable), INITS);
+        super(AttachedFileAudit.class, forVariable(variable));
     }
 
     public QAttachedFileAudit(Path<? extends AttachedFileAudit> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QAttachedFileAudit(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QAttachedFileAudit(PathMetadata metadata, PathInits inits) {
-        this(AttachedFileAudit.class, metadata, inits);
-    }
-
-    public QAttachedFileAudit(Class<? extends AttachedFileAudit> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this.createdBy = inits.isInitialized("createdBy") ? new kr.ac.univ.lab.member.domian.QMember(forProperty("createdBy"), inits.get("createdBy")) : null;
+        super(AttachedFileAudit.class, metadata);
     }
 
 }

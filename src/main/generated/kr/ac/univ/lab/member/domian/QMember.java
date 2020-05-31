@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,11 +17,9 @@ public class QMember extends EntityPathBase<Member> {
 
     private static final long serialVersionUID = 749774788L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QMember member = new QMember("member1");
 
-    public final kr.ac.univ.lab.common.domain.QGeneralAudit _super;
+    public final kr.ac.univ.lab.common.domain.QGeneralAudit _super = new kr.ac.univ.lab.common.domain.QGeneralAudit(this);
 
     public final EnumPath<kr.ac.univ.lab.common.domain.enums.ActiveStatus> activeStatus = createEnum("activeStatus", kr.ac.univ.lab.common.domain.enums.ActiveStatus.class);
 
@@ -32,11 +29,11 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath contact = createString("contact");
 
-    // inherited
-    public final QMember createdBy;
+    //inherited
+    public final StringPath createdBy = _super.createdBy;
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> createdDate;
+    public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
     public final StringPath email = createString("email");
 
@@ -47,7 +44,7 @@ public class QMember extends EntityPathBase<Member> {
     public final DatePath<java.time.LocalDate> graduationDate = createDate("graduationDate", java.time.LocalDate.class);
 
     //inherited
-    public final NumberPath<Long> idx;
+    public final NumberPath<Long> idx = _super.idx;
 
     public final StringPath introduction = createString("introduction");
 
@@ -55,11 +52,11 @@ public class QMember extends EntityPathBase<Member> {
 
     public final DateTimePath<java.time.LocalDateTime> lastLoginDate = createDateTime("lastLoginDate", java.time.LocalDateTime.class);
 
-    // inherited
-    public final QMember lastModifiedBy;
+    //inherited
+    public final StringPath lastModifiedBy = _super.lastModifiedBy;
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> lastModifiedDate;
+    public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
     public final StringPath memberId = createString("memberId");
 
@@ -78,29 +75,15 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath workplace = createString("workplace");
 
     public QMember(String variable) {
-        this(Member.class, forVariable(variable), INITS);
+        super(Member.class, forVariable(variable));
     }
 
     public QMember(Path<? extends Member> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QMember(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QMember(PathMetadata metadata, PathInits inits) {
-        this(Member.class, metadata, inits);
-    }
-
-    public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this._super = new kr.ac.univ.lab.common.domain.QGeneralAudit(type, metadata, inits);
-        this.createdBy = _super.createdBy;
-        this.createdDate = _super.createdDate;
-        this.idx = _super.idx;
-        this.lastModifiedBy = _super.lastModifiedBy;
-        this.lastModifiedDate = _super.lastModifiedDate;
+        super(Member.class, metadata);
     }
 
 }

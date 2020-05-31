@@ -1,4 +1,4 @@
-package kr.ac.univ.lab.member.exception;
+package kr.ac.univ.lab.common.exception;
 
 import java.io.IOException;
 
@@ -15,10 +15,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-
-        //로그인 성공시 필요한 작업 추가
-
-
+    	// 로그인 성공시 기능 구현		
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }

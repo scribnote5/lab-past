@@ -16,6 +16,6 @@ public class CommonDto {
 	private Long idx;
 	private LocalDateTime createdDate;
 	private LocalDateTime lastModifiedDate;
-	private Member createdBy;
-	private Member lastModifiedBy;
+	private String createdBy;
+	private String lastModifiedBy;
 }

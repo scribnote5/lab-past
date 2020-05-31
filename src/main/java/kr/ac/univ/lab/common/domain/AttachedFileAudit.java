@@ -29,7 +29,6 @@ public abstract class AttachedFileAudit {
 	@CreatedDate
 	private LocalDateTime createdDate;
 	
-	@ManyToOne
 	@CreatedBy
-	private Member createdBy;
+	private String createdBy;
 }

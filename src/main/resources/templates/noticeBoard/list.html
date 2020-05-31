@@ -55,7 +55,7 @@
 							&nbsp;
 							<img th:if="${noticeBoardDto.newIcon}" th:attr="src=@{|/images/new_icon.png|}" th:style="'width: 15px; height: 15px'" /> 
 						</td>
-						<td>추가 예정</td>
+						<td th:text="${noticeBoardDto.createdBy}">></td>
 						<td th:text="${#temporals.format(noticeBoardDto.createdDate,'yyyy-MM-dd HH:mm')}"></td>
 						<td th:text="${#temporals.format(noticeBoardDto.lastModifiedDate,'yyyy-MM-dd HH:mm')}"></td>
 						

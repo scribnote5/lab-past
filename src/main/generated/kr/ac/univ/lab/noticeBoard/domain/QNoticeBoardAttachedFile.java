@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -18,49 +17,35 @@ public class QNoticeBoardAttachedFile extends EntityPathBase<NoticeBoardAttached
 
     private static final long serialVersionUID = -1860278264L;
 
-    private static final PathInits INITS = PathInits.DIRECT2;
-
     public static final QNoticeBoardAttachedFile noticeBoardAttachedFile = new QNoticeBoardAttachedFile("noticeBoardAttachedFile");
 
-    public final kr.ac.univ.lab.common.domain.QAttachedFileAudit _super;
-
-    // inherited
-    public final kr.ac.univ.lab.member.domian.QMember createdBy;
+    public final kr.ac.univ.lab.common.domain.QAttachedFileAudit _super = new kr.ac.univ.lab.common.domain.QAttachedFileAudit(this);
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> createdDate;
+    public final StringPath createdBy = _super.createdBy;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdDate = _super.createdDate;
 
     public final StringPath fileSize = createString("fileSize");
 
     //inherited
-    public final NumberPath<Long> idx;
+    public final NumberPath<Long> idx = _super.idx;
 
     public final NumberPath<Long> postIdx = createNumber("postIdx", Long.class);
 
     public final StringPath savedFileName = createString("savedFileName");
 
     public QNoticeBoardAttachedFile(String variable) {
-        this(NoticeBoardAttachedFile.class, forVariable(variable), INITS);
+        super(NoticeBoardAttachedFile.class, forVariable(variable));
     }
 
     public QNoticeBoardAttachedFile(Path<? extends NoticeBoardAttachedFile> path) {
-        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
+        super(path.getType(), path.getMetadata());
     }
 
     public QNoticeBoardAttachedFile(PathMetadata metadata) {
-        this(metadata, PathInits.getFor(metadata, INITS));
-    }
-
-    public QNoticeBoardAttachedFile(PathMetadata metadata, PathInits inits) {
-        this(NoticeBoardAttachedFile.class, metadata, inits);
-    }
-
-    public QNoticeBoardAttachedFile(Class<? extends NoticeBoardAttachedFile> type, PathMetadata metadata, PathInits inits) {
-        super(type, metadata, inits);
-        this._super = new kr.ac.univ.lab.common.domain.QAttachedFileAudit(type, metadata, inits);
-        this.createdBy = _super.createdBy;
-        this.createdDate = _super.createdDate;
-        this.idx = _super.idx;
+        super(NoticeBoardAttachedFile.class, metadata);
     }
 
 }

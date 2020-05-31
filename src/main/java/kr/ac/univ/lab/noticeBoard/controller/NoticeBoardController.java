@@ -53,6 +53,10 @@ public class NoticeBoardController {
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByPostIdx(idx));
 		model.addAttribute("noticeBoardDto", noticeBoardDto);
 
+		System.out.println(noticeBoardDto.getCreatedBy());
+		System.out.println(noticeBoardDto.getCreatedBy());
+		System.out.println(noticeBoardDto.getCreatedBy());
+		
 		return "/noticeBoard/read";
 	}
 }

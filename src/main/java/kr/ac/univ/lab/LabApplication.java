@@ -4,11 +4,17 @@ import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,10 +27,12 @@ import kr.ac.univ.lab.member.repository.MemberRepository;
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoard;
 import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardRepository;
 
-@EnableJpaAuditing
 @RestController
 @SpringBootApplication
 public class LabApplication {
+	@Autowired
+	AuthenticationManager authenticationManager;
+	
 	private static final Logger logger = LoggerFactory.getLogger(LabApplication.class);
 	 
 	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -45,7 +53,7 @@ public class LabApplication {
 	}
 
 	@Bean
-	public CommandLineRunner runner(NoticeBoardRepository noticeBoardRepository, MemberRepository memberRepository) {
+	public CommandLineRunner runner(NoticeBoardRepository noticeBoardRepository, MemberRepository memberRepository) {		
 		return (args) -> {
 			/* 기존 데이터 모두 삭제 */ 
 			noticeBoardRepository.deleteAll();

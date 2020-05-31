@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -17,8 +18,8 @@ import org.springframework.security.web.header.writers.frameoptions.WhiteListedA
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import kr.ac.univ.lab.member.exception.CustomAuthenticationFailureHandler;
-import kr.ac.univ.lab.member.exception.CustomAuthenticationSuccessHandler;
+import kr.ac.univ.lab.common.exception.CustomAuthenticationFailureHandler;
+import kr.ac.univ.lab.common.exception.CustomAuthenticationSuccessHandler;
 import kr.ac.univ.lab.member.service.MemberService;
 import lombok.AllArgsConstructor;
 
@@ -45,7 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // 페이지 권한 설정 
                 .antMatchers("/member/list").hasAuthority("root")
-                .antMatchers("/notice-board/list").hasAuthority("root")
                 .antMatchers("/h2-console/**").permitAll() // h2-console 접근 허용
                 .antMatchers("/**").permitAll()
             .and()
@@ -85,5 +85,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationFailureHandler CustomAuthenticationFailureHandler() {
         return new CustomAuthenticationFailureHandler();
+    }
+    
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
