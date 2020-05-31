@@ -45,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // 페이지 권한 설정 
                 .antMatchers("/member/list").hasAuthority("root")
-                
+                .antMatchers("/notice-board/list").hasAuthority("root")
                 .antMatchers("/h2-console/**").permitAll() // h2-console 접근 허용
                 .antMatchers("/**").permitAll()
             .and()

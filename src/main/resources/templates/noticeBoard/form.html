@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+
 <!-- css -->
 <th:block th:replace="layout/css.html"></th:block>
 
@@ -109,6 +110,7 @@
   
 	<!-- javascript -->
 	<script>
+	
 	var insertFileArray = [];
 	var deleteFileArray = [];
 	var imgDataId = 0;
@@ -229,7 +231,7 @@
 
 	</script>
     <script th:if="!${noticeBoardDto?.idx}">
-   		$('#insert').click(async function () {
+   		$('#insert').click(function () {
    			// 게시글 업로드
    			var jsonData = $("#form").serializeObject();
  	       	var postIdx;
@@ -241,7 +243,7 @@
 				dataType: "text",
 				contentType: "application/json",
 				async: false,
-				
+								
                 success: function (msg) {
                 	postIdx = msg;                    
               	},
