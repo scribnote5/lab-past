@@ -53,20 +53,13 @@ public class MemberController {
 	public String noticeBoardRead(@RequestParam(value = "idx", defaultValue = "0") Long idx, @AuthenticationPrincipal UserDto userDto, Model model) {
 		// 일반 회원이 다른 회원의 정보에 접근하는 경우
 		for(GrantedAuthority grantedAuthority : userDto.getAuthorities()) {
-			System.out.println("grantedAuthority.getAuthority(): " + grantedAuthority.getAuthority());
-			
 			switch(grantedAuthority.getAuthority()) {
 			case "root":
 				break;
 			case "manager":
 				break;	
 			case "general":
-				System.out.println("userDto.getIdx(): " + userDto.getIdx());
-				System.out.println("idx: " + idx);
-				System.out.println(userDto.getIdx() != idx);
-				
 				if(userDto.getIdx() != idx) {
-					
 					return "/login/denied";
 				}
 				

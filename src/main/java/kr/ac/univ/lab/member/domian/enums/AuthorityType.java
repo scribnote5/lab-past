@@ -1,6 +1,6 @@
 package kr.ac.univ.lab.member.domian.enums;
 
-public enum PermissionType {
+public enum AuthorityType {
 	NON_MEMBER("non_member"), 
 	GENERAL("general"), 
 	MANAGER("manager"),
@@ -8,11 +8,11 @@ public enum PermissionType {
 
 	private String type;
 
-	private PermissionType(String type) {
+	private AuthorityType(String type) {
 		this.type = type;
 	}
 
-	public String getPermissionType() {
+	public String getAuthorityType() {
 		return this.type;
 	}
 }

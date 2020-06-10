@@ -23,28 +23,28 @@ public class NoticeBoardAttachedFileRepositoryImpl extends QuerydslRepositorySup
 		this.queryFactory = queryFactory;
 	}
 
-	public List<NoticeBoardAttachedFile> findAttachedFileByPostId(Long postId) {
+	public List<NoticeBoardAttachedFile> findAttachedFileByNoticeBoardIdx(Long noticeBoardIdx) {
 		QNoticeBoardAttachedFile noticeBoardAttachedFile = QNoticeBoardAttachedFile.noticeBoardAttachedFile;
 	  
 		/* SELECT * 
 		 *   FROM AttachedFile 
-		 *  WHERE postId = 'postId' 
+		 *  WHERE noticeBoardIdx = 'noticeBoardIdx' 
 		 */
 	  	return queryFactory 
 	  			.selectFrom(noticeBoardAttachedFile)
-	  			.where(noticeBoardAttachedFile.postIdx.eq(postId)) 
+	  			.where(noticeBoardAttachedFile.noticeBoardIdx.eq(noticeBoardIdx)) 
 	  			.fetch(); 
 	  }
 
-	public Long deleteAttachedFileByPostId(Long postIdx) { 
+	public Long deleteAttachedFileByNoticeBoardIdx(Long noticeBoardIdx) { 
 		QNoticeBoardAttachedFile noticeBoardAttachedFile = QNoticeBoardAttachedFile.noticeBoardAttachedFile;
 		  
 	 	/* DELETE FROM AttachedFile  
-	 	 *  WHERE postId = 'postId' 
+	 	 *  WHERE noticeBoardIdx = 'noticeBoardIdx' 
 	 	 */
 	  return queryFactory 
 			  .delete(noticeBoardAttachedFile)
-			  .where(noticeBoardAttachedFile.postIdx.eq(postIdx)) 
+			  .where(noticeBoardAttachedFile.noticeBoardIdx.eq(noticeBoardIdx)) 
 			  .execute(); 
 	  }
 }

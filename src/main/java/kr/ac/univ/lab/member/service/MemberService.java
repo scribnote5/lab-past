@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.ac.univ.lab.common.dto.SearchDto;
 import kr.ac.univ.lab.member.domian.Member;
-import kr.ac.univ.lab.member.domian.enums.PermissionType;
+import kr.ac.univ.lab.member.domian.enums.AuthorityType;
 import kr.ac.univ.lab.member.dto.MemberDto;
 import kr.ac.univ.lab.member.dto.UserDto;
 import kr.ac.univ.lab.member.mapper.MemberMapper;
@@ -81,19 +80,18 @@ public class MemberService implements UserDetailsService {
 		boolean credentialsNonExpired = true; 
 		boolean accountNonLocked = true;
 
-
-		switch (member.getPermissionType()) {
+		switch (member.getAuthorityType()) {
 		case ROOT:
-			authorities.add(new SimpleGrantedAuthority(PermissionType.ROOT.getPermissionType()));
+			authorities.add(new SimpleGrantedAuthority(AuthorityType.ROOT.getAuthorityType()));
 			break;
 		case MANAGER:
-			authorities.add(new SimpleGrantedAuthority(PermissionType.MANAGER.getPermissionType()));
+			authorities.add(new SimpleGrantedAuthority(AuthorityType.MANAGER.getAuthorityType()));
 			break;
 		case GENERAL:
-			authorities.add(new SimpleGrantedAuthority(PermissionType.GENERAL.getPermissionType()));
+			authorities.add(new SimpleGrantedAuthority(AuthorityType.GENERAL.getAuthorityType()));
 			break;
 		case NON_MEMBER:
-			authorities.add(new SimpleGrantedAuthority(PermissionType.NON_MEMBER.getPermissionType()));
+			authorities.add(new SimpleGrantedAuthority(AuthorityType.NON_MEMBER.getAuthorityType()));
 			break;
 		default:
 			break;

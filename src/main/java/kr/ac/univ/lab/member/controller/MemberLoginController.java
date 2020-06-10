@@ -24,25 +24,23 @@ public class MemberLoginController {
 	// Login Page
 	@GetMapping("/index")
 	public String index(@AuthenticationPrincipal UserDto userDto, Model model) {
-//		System.out.println(userDto.getAuthorities());
+		System.out.println(userDto);
 		model.addAttribute("userDto", userDto);
+		
 		return "/login/index";
 	}
 
 	// Login Page
 	@GetMapping("/login")
 	public String login() {
-
+		
 		return "/login/login";
 	}
 
 	// Login Fail
 	@PostMapping("/login/fail")
 	public String fail(HttpServletRequest request, String errormsg) {
-		System.out.println("username: " + request.getAttribute("username"));
-		System.out.println("password: " + request.getAttribute("password"));
-		System.out.println("errormsg: " + request.getAttribute("errormsg"));
-
+		
 		return "/login/login";
 	}
 

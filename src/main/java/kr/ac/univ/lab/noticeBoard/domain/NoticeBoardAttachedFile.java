@@ -21,7 +21,7 @@ import lombok.ToString;
 @EntityListeners(AuditingEntityListener.class)
 public class NoticeBoardAttachedFile extends AttachedFileAudit {
 	@Column
-	private Long postIdx;
+	private Long noticeBoardIdx;
 	
 	@Column
 	private String savedFileName;
@@ -30,8 +30,8 @@ public class NoticeBoardAttachedFile extends AttachedFileAudit {
 	private String fileSize;
 
 	@Builder
-	public NoticeBoardAttachedFile(Long postIdx, String savedFileName, String fileSize) {
-		this.postIdx = postIdx;
+	public NoticeBoardAttachedFile(Long noticeBoardIdx, String savedFileName, String fileSize) {
+		this.noticeBoardIdx = noticeBoardIdx;
 		this.savedFileName = savedFileName;
 		this.fileSize = fileSize;
 	}

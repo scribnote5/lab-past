@@ -137,9 +137,9 @@
             <tr>
                 <th style="padding:13px 0 0 15px;">권한유형</th>
                 <td>
-                	<span class="col-md-1 form-control input-sm" th:if="*{permissionType?.name() == 'MANAGER'}" th:text="관리자"> </span>
-                	<span class="col-md-1 form-control input-sm" th:if="*{permissionType?.name() == 'GENERAL'}" th:text="일반회원"> </span>
-                	<span class="col-md-1 form-control input-sm" th:if="*{permissionType?.name() == 'NON_MEMBER'}" th:text="비회원"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{authorityType?.name() == 'MANAGER'}" th:text="관리자"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{authorityType?.name() == 'GENERAL'}" th:text="일반회원"> </span>
+                	<span class="col-md-1 form-control input-sm" th:if="*{authorityType?.name() == 'NON_MEMBER'}" th:text="비회원"> </span>
                 </td>
             </tr>
       

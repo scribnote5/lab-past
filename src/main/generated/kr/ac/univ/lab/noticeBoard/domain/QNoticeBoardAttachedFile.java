@@ -32,7 +32,7 @@ public class QNoticeBoardAttachedFile extends EntityPathBase<NoticeBoardAttached
     //inherited
     public final NumberPath<Long> idx = _super.idx;
 
-    public final NumberPath<Long> postIdx = createNumber("postIdx", Long.class);
+    public final NumberPath<Long> noticeBoardIdx = createNumber("noticeBoardIdx", Long.class);
 
     public final StringPath savedFileName = createString("savedFileName");
 

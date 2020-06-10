@@ -1,11 +1,7 @@
 package kr.ac.univ.lab.noticeBoard.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import kr.ac.univ.lab.common.domain.enums.ActiveStatus;
 import kr.ac.univ.lab.common.dto.CommonDto;
-import kr.ac.univ.lab.noticeBoard.domain.NoticeBoardAttachedFile;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +11,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class NoticeBoardDto extends CommonDto{
+public class NoticeBoardCommentDto extends CommonDto{
 	/*
 	 * JPA Audit
 	 */
@@ -23,21 +19,13 @@ public class NoticeBoardDto extends CommonDto{
 	/*
 	 * 기본 정보
 	 */
-	private String title;
 	private String content;
 	private ActiveStatus activeStatus;
-	private Long viewCount;
-	private String memberId;
-	
+
 	/*
-	 * AnonymousUser 여부
+	 * 접근 여부
 	 */
-	private boolean isAnonymousUser;
-	
-	/*
-	 * 첨부 파일
-	 */
-	private List<NoticeBoardAttachedFile> attachedFileList = new ArrayList<NoticeBoardAttachedFile>();
+	private boolean isAccess;
 	
 	/*
 	 * newIcon 출력 여부

@@ -38,10 +38,6 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 			errormsg = "비활성화된 계정입니다.";
 		}
 
-//      System.out.println("username: " + username);
-//		System.out.println("password: " + password);
-//		System.out.println("errormsg: " + errormsg);
-
 		request.setAttribute("username", username);
 		request.setAttribute("password", password);
 		request.setAttribute("errormsg", errormsg);

@@ -26,8 +26,8 @@ public class NoticeBoardAttachedFileService {
         this.noticeBoardAttachedFileRepositoryImpl = noticeBoardAttachedFileRepositoryImpl;
     }
 
-	public List<NoticeBoardAttachedFile> findAttachedFileByPostIdx(Long postIdx) {
-		return noticeBoardAttachedFileRepositoryImpl.findAttachedFileByPostId(postIdx);
+	public List<NoticeBoardAttachedFile> findAttachedFileByNoticeBoardIdx(Long noticeBoardIdx) {
+		return noticeBoardAttachedFileRepositoryImpl.findAttachedFileByNoticeBoardIdx(noticeBoardIdx);
 	}
 	
 	public void insertAttachedFile(NoticeBoardAttachedFile attachedFile) {
@@ -46,16 +46,16 @@ public class NoticeBoardAttachedFileService {
 		noticeBoardAttachedFileRepository.deleteById(idx);
 	}
 
-	public Long deleteAttachedFileByPostIdx(Long idx) {
-		return noticeBoardAttachedFileRepositoryImpl.deleteAttachedFileByPostId(idx);
+	public Long deleteAttachedFileByNoticeBoardIdx(Long idx) {
+		return noticeBoardAttachedFileRepositoryImpl.deleteAttachedFileByNoticeBoardIdx(idx);
 	}
 	
 	/**
 	 * 첨부 파일 업로드
-	 * @param postId
+	 * @param noticeBoardIdx
 	 * @param files
 	 */
-	public void uploadAttachedFile(Long postIdx, MultipartFile[] files) {
+	public void uploadAttachedFile(Long noticeBoardIdx, MultipartFile[] files) {
 		NoticeBoardAttachedFile uploadFile = new NoticeBoardAttachedFile();
 
 		try {
@@ -71,7 +71,7 @@ public class NoticeBoardAttachedFileService {
 				Files.write(path, file.getBytes());
 
 				uploadFile = NoticeBoardAttachedFile.builder()
-						.postIdx(postIdx)
+						.noticeBoardIdx(noticeBoardIdx)
 						.savedFileName(savedFileName)
 						.fileSize(CommonUtil.convertFileSize(file.getSize()))
 						.build();
@@ -90,7 +90,7 @@ public class NoticeBoardAttachedFileService {
 	 * @param idx
 	 */
 	public void deleteAttachedFile(Long idx) {
-		List<NoticeBoardAttachedFile> attachedFileList = findAttachedFileByPostIdx(idx);
+		List<NoticeBoardAttachedFile> attachedFileList = findAttachedFileByNoticeBoardIdx(idx);
 		
 		for (NoticeBoardAttachedFile attachedFile : attachedFileList) {
 			Path path = Paths.get("./upload/" + attachedFile.getSavedFileName());
@@ -102,7 +102,7 @@ public class NoticeBoardAttachedFileService {
 			}
 		}
 		
-		deleteAttachedFileByPostIdx(idx);
+		deleteAttachedFileByNoticeBoardIdx(idx);
 	}
 	
 	/**

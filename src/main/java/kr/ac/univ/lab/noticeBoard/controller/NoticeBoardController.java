@@ -1,5 +1,7 @@
 package kr.ac.univ.lab.noticeBoard.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -9,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.ac.univ.lab.common.dto.SearchDto;
+import kr.ac.univ.lab.common.util.CommentAccess;
+import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardCommentDto;
 import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardDto;
 import kr.ac.univ.lab.noticeBoard.mapper.NoticeBoardMapper;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardAttachedFileService;
+import kr.ac.univ.lab.noticeBoard.service.NoticeBoardCommentService;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardService;
 
 @Controller
@@ -19,11 +24,12 @@ import kr.ac.univ.lab.noticeBoard.service.NoticeBoardService;
 public class NoticeBoardController {
 	private final NoticeBoardService noticeBoardService;
 	private final NoticeBoardAttachedFileService noticeBoardAttachedFileService;
+	private final NoticeBoardCommentService noticeBoardCommentService;
 
-	public NoticeBoardController(NoticeBoardService noticeBoardService,
-			NoticeBoardAttachedFileService noticeBoardAttachedFileService) {
+	public NoticeBoardController(NoticeBoardService noticeBoardService,	NoticeBoardAttachedFileService noticeBoardAttachedFileService, NoticeBoardCommentService noticeBoardCommentService) {
 		this.noticeBoardService = noticeBoardService;
 		this.noticeBoardAttachedFileService = noticeBoardAttachedFileService;
+		this.noticeBoardCommentService = noticeBoardCommentService;
 	}
 
 	// List
@@ -38,8 +44,10 @@ public class NoticeBoardController {
 	@GetMapping("/form{idx}")
 	public String noticeBoardForm(@RequestParam(value = "idx", defaultValue = "0") Long idx, Model model) {
 		NoticeBoardDto noticeBoardDto;
+		
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardService.findNoticeBoardByIdx(idx));
-		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByPostIdx(idx));
+		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByNoticeBoardIdx(idx));
+		
 		model.addAttribute("noticeBoardDto", noticeBoardDto);
 
 		return "/noticeBoard/form";
@@ -49,13 +57,17 @@ public class NoticeBoardController {
 	@GetMapping({ "", "/" })
 	public String noticeBoardRead(@RequestParam(value = "idx", defaultValue = "0") Long idx, Model model) {
 		NoticeBoardDto noticeBoardDto;
+		List<NoticeBoardCommentDto> noticeBoardCommentDtoList;
+		
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardService.findNoticeBoardByIdx(idx));
-		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByPostIdx(idx));
-		model.addAttribute("noticeBoardDto", noticeBoardDto);
+		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByNoticeBoardIdx(idx));
+		// 익명 사용자 여부 결정
+		noticeBoardDto.setAnonymousUser(CommentAccess.isAnonymousUser());
 
-		System.out.println(noticeBoardDto.getCreatedBy());
-		System.out.println(noticeBoardDto.getCreatedBy());
-		System.out.println(noticeBoardDto.getCreatedBy());
+		noticeBoardCommentDtoList = noticeBoardCommentService.findAllByNoticeBoardIdxOrderByCreatedDateDesc(idx);
+		
+		model.addAttribute("noticeBoardDto", noticeBoardDto);
+		model.addAttribute("noticeBoardCommentDtoList", noticeBoardCommentDtoList);
 		
 		return "/noticeBoard/read";
 	}

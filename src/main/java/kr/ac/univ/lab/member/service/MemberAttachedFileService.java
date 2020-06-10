@@ -51,8 +51,8 @@ public class MemberAttachedFileService {
 	}
 	
 	/**
-	 * 첨부 파일 업로드
-	 * @param postId
+	 * 첨부 파일 업로드 
+	 * @param memberIdx
 	 * @param files
 	 */
 	public void uploadAttachedFile(Long memberIdx, MultipartFile[] files) {

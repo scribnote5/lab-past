@@ -67,10 +67,10 @@
 						<td th:if="${memberDto.memberType?.name() == 'PART_TIME_MS'}" th:text="'석사 ' + '-' + ' 파트타임'"></td>
 						<td th:if="${memberDto.memberType?.name() == 'BS'}" th:text="'학부' + '연구생"></td>
 						
-						<td th:if="${memberDto.permissionType?.name() == 'ROOT'}" th:text="root"></td>
-						<td th:if="${memberDto.permissionType?.name() == 'MANAGER'}" th:text="관리자"></td>
-						<td th:if="${memberDto.permissionType?.name() == 'GENERAL'}" th:text="일반회원"></td>
-						<td th:if="${memberDto.permissionType?.name() == 'NON_MEMBER'}" th:text="비회원"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'ROOT'}" th:text="root"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'MANAGER'}" th:text="관리자"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'GENERAL'}" th:text="일반회원"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'NON_MEMBER'}" th:text="비회원"></td>
 		
 						
 						

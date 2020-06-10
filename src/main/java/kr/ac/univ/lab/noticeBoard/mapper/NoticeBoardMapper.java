@@ -15,9 +15,6 @@ public interface NoticeBoardMapper extends EntityMapper<NoticeBoardDto, NoticeBo
 	NoticeBoardMapper INSTANCE = Mappers.getMapper(NoticeBoardMapper.class);
 
 	default NoticeBoardDto toDto(NoticeBoardDto noticeBoardDto, List<NoticeBoardAttachedFile> attachedFileList) {
-//		System.out.println("attachedFileList.size(): " + attachedFileList.size());
-//		System.out.println(attachedFileList);
-
 		for (NoticeBoardAttachedFile attachedFile : attachedFileList) {
 			noticeBoardDto.getAttachedFileList().add(attachedFile);	
 		}

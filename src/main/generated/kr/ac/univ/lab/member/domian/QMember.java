@@ -25,6 +25,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final DatePath<java.time.LocalDate> admissionDate = createDate("admissionDate", java.time.LocalDate.class);
 
+    public final EnumPath<kr.ac.univ.lab.member.domian.enums.AuthorityType> authorityType = createEnum("authorityType", kr.ac.univ.lab.member.domian.enums.AuthorityType.class);
+
     public final DatePath<java.time.LocalDate> birthDate = createDate("birthDate", java.time.LocalDate.class);
 
     public final StringPath contact = createString("contact");
@@ -67,8 +69,6 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath messangerId = createString("messangerId");
 
     public final StringPath password = createString("password");
-
-    public final EnumPath<kr.ac.univ.lab.member.domian.enums.PermissionType> permissionType = createEnum("permissionType", kr.ac.univ.lab.member.domian.enums.PermissionType.class);
 
     public final StringPath webPage = createString("webPage");
 

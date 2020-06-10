@@ -15,9 +15,6 @@ public interface MemberMapper extends EntityMapper<MemberDto, Member> {
 	MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
 	
 	default MemberDto toDto(MemberDto memberDto, List<MemberAttachedFile> attachedFileList) {
-//		System.out.println("attachedFileList.size(): " + attachedFileList.size());
-//		System.out.println(attachedFileList);
-
 		for (MemberAttachedFile attachedFile : attachedFileList) {
 			memberDto.getAttachedFileList().add(attachedFile);	
 		}

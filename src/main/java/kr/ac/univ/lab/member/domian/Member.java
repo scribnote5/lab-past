@@ -11,10 +11,10 @@ import javax.persistence.Table;
 
 import kr.ac.univ.lab.common.domain.GeneralAudit;
 import kr.ac.univ.lab.common.domain.enums.ActiveStatus;
+import kr.ac.univ.lab.member.domian.enums.AuthorityType;
 import kr.ac.univ.lab.member.domian.enums.GenderType;
 import kr.ac.univ.lab.member.domian.enums.MemberStatus;
 import kr.ac.univ.lab.member.domian.enums.MemberType;
-import kr.ac.univ.lab.member.domian.enums.PermissionType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -92,7 +92,7 @@ public class Member extends GeneralAudit {
 
 	@Column
 	@Enumerated(EnumType.STRING)
-	private PermissionType permissionType;
+	private AuthorityType authorityType;
 
 	/*
 	 * 자동으로 업데이트 되는 정보
@@ -102,7 +102,7 @@ public class Member extends GeneralAudit {
 
 	
 	@Builder
-	public Member(String memberId, String password, String koreanName, String englishName, GenderType gender, LocalDate birthDate, String email, String messangerId, String contact, MemberType memberType, MemberStatus memberStatus, String introduction, LocalDate admissionDate, LocalDate graduationDate, String webPage, String workplace, ActiveStatus activeStatus, PermissionType permissionType, LocalDateTime lastLoginDate ) {
+	public Member(String memberId, String password, String koreanName, String englishName, GenderType gender, LocalDate birthDate, String email, String messangerId, String contact, MemberType memberType, MemberStatus memberStatus, String introduction, LocalDate admissionDate, LocalDate graduationDate, String webPage, String workplace, ActiveStatus activeStatus, AuthorityType authorityType, LocalDateTime lastLoginDate ) {
 		this.memberId = memberId;
 		this.password = password;
 		this.koreanName = koreanName;
@@ -120,7 +120,7 @@ public class Member extends GeneralAudit {
 		this.admissionDate = admissionDate;
 		this.graduationDate = graduationDate;
 		this.activeStatus = activeStatus;
-		this.permissionType = permissionType;
+		this.authorityType = authorityType;
 		this.lastLoginDate = lastLoginDate;
 	}
 	
@@ -142,6 +142,6 @@ public class Member extends GeneralAudit {
 		this.admissionDate = member.getAdmissionDate();
 		this.graduationDate = member.getGraduationDate();
 		this.activeStatus = member.getActiveStatus();
-		this.permissionType = member.getPermissionType();
+		this.authorityType = member.getAuthorityType();
 	}
 }

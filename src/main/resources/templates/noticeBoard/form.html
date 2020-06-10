@@ -68,25 +68,29 @@
                 <!-- <td><input type="file" name="file"/></td> -->
             </tr>
             <tr>
+                <th style="padding:13px 0 0 15px;">첨부 파일</th>
+                <td>
+                	<div id="attachedFileList" th:each="attachedFile : *{attachedFileList}" > 
+	                	<div th:id="imgData + ${attachedFileStat.index}" >
+					    	<!-- <span th:attr="onclick=|location.href='/api/attachedFiles/download/${attachedFile.savedFileName}'|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize} + '&nbsp;'"></span> -->
+					    	<span th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize} + '&nbsp;'"></span>
+				    		<img th:attr="src=@{|/images/cancel.jpg|}, onclick=|deleteFile('${attachedFileStat.index}','${attachedFile.idx}','${attachedFile.savedFileName}')|" th:style="'width: 15px; height: 15px'" />
+				    	</div>
+			    	</div>
+                </td>        
+            </tr>
+            <tr>
                 <td></td>
                 <td></td>
             </tr>
             
-        </table>
+        </table> 
         
         <!-- 파일을 업로드할 영역 -->
 	    <div id="fileDrop" class="fileDrop"></div>
 	    <!-- 업로드된 파일 목록 -->
-	    <div id="attachedFileList"> </div>
-        <div id="attachedFileList" th:each="attachedFile : *{attachedFileList}" > 
-        	<div th:id="imgData + ${attachedFileStat.index}" >
-		    	<!-- <span th:attr="onclick=|location.href='/api/attachedFiles/download/${attachedFile.savedFileName}'|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize} + '&nbsp;'"></span> -->
-		    	<span th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize} + '&nbsp;'"></span>
-	    		<img th:attr="src=@{|/images/cancel.jpg|}, onclick=|deleteFile('${attachedFileStat.index}','${attachedFile.idx}','${attachedFile.savedFileName}')|" th:style="'width: 15px; height: 15px'" />
-	    	</div>	
-	    </div>
-	    <br/> 
-        
+	    
+ 
         <div class="pull-left">
             <a href="/notice-board/list" class="btn btn-default">목록으로</a>
         </div>
@@ -234,7 +238,7 @@
    		$('#insert').click(function () {
    			// 게시글 업로드
    			var jsonData = $("#form").serializeObject();
- 	       	var postIdx;
+ 	       	var noticeBoardIdx;
  	       	
             $.ajax({
 				url: "/api/notice-boards",
@@ -245,7 +249,7 @@
 				async: false,
 								
                 success: function (msg) {
-                	postIdx = msg;                    
+                	noticeBoardIdx = msg;                    
               	},
                 error: function () {
                     alert('게시글 업로드 실패!');
@@ -259,7 +263,7 @@
    				formData.append("files", insertFileArray[i]);
    			}
    			
-   			formData.append("idx", postIdx);
+   			formData.append("idx", noticeBoardIdx);
    		   			
 			$.ajax({
 				url: "/api/notice-boards/attachedFile",

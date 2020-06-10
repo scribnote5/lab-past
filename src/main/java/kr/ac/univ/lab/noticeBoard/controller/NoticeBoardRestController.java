@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoard;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardAttachedFileService;
+import kr.ac.univ.lab.noticeBoard.service.NoticeBoardCommentService;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardService;
 
 
@@ -24,11 +25,13 @@ import kr.ac.univ.lab.noticeBoard.service.NoticeBoardService;
 public class NoticeBoardRestController {
 	private final NoticeBoardService noticeBoardService;
 	private final NoticeBoardAttachedFileService noticeBoardAttachedFileService;
-	
-	public NoticeBoardRestController(NoticeBoardService noticeBoardService, NoticeBoardAttachedFileService noticeBoardAttachedFileService) {
-        this.noticeBoardService = noticeBoardService;
-        this.noticeBoardAttachedFileService = noticeBoardAttachedFileService;
-    }
+	private final NoticeBoardCommentService noticeBoardCommentService;
+
+	public NoticeBoardRestController(NoticeBoardService noticeBoardService,	NoticeBoardAttachedFileService noticeBoardAttachedFileService, NoticeBoardCommentService noticeBoardCommentService) {
+		this.noticeBoardService = noticeBoardService;
+		this.noticeBoardAttachedFileService = noticeBoardAttachedFileService;
+		this.noticeBoardCommentService = noticeBoardCommentService;
+	}
 
 	@PostMapping
 	public ResponseEntity<?> postNoticeBoard(@RequestBody NoticeBoard noticeBoard) {
@@ -50,7 +53,8 @@ public class NoticeBoardRestController {
 	public ResponseEntity<?> deleteNoticeBoard(@PathVariable("idx") Long idx) {
 		noticeBoardService.deleteNoticeBoardByIdx(idx);
 		noticeBoardAttachedFileService.deleteAttachedFile(idx);
-
+		noticeBoardCommentService.deleteAllByNoticeBoardIdx(idx);
+		
 		return new ResponseEntity<>("{}", HttpStatus.OK);
 	}
 
