@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import kr.ac.univ.lab.common.util.CommonUtil;
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoard;
 import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardDto;
 import kr.ac.univ.lab.noticeBoard.mapper.NoticeBoardMapper;

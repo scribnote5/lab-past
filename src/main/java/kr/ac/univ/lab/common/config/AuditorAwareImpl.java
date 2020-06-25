@@ -2,19 +2,16 @@ package kr.ac.univ.lab.common.config;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import kr.ac.univ.lab.LabApplication;
+import kr.ac.univ.lab.common.error.exception.AnonymousUserException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class AuditorAwareImpl implements AuditorAware<String> {
-	
-	private static final Logger logger = LoggerFactory.getLogger(LabApplication.class);
-	
 	@Override
 	public Optional<String> getCurrentAuditor() {
 		// Spring Security를 통한 Auditor 매핑
@@ -25,11 +22,15 @@ public class AuditorAwareImpl implements AuditorAware<String> {
             return Optional.of("root");
         }
         
-        logger.info("AuditorAwareImpl: getCurrentAuditor");
-        logger.info("authentication: " + authentication);
-        logger.info("authentication.getPrincipal(): " + authentication.getPrincipal());
+        log.info("AuditorAwareImpl: getCurrentAuditor");
+        log.info("authentication: " + authentication);
+        log.info("authentication.getPrincipal(): " + authentication.getPrincipal());
         
-        UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+        if("anonymousUser".equals(authentication.getPrincipal())) {
+        	throw new AnonymousUserException();
+        }
+        
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         
         return Optional.of(userDetails.getUsername());
 	}

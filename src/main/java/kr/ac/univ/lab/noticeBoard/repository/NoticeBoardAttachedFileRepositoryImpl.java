@@ -28,11 +28,13 @@ public class NoticeBoardAttachedFileRepositoryImpl extends QuerydslRepositorySup
 	  
 		/* SELECT * 
 		 *   FROM AttachedFile 
-		 *  WHERE noticeBoardIdx = 'noticeBoardIdx' 
+		 *  WHERE noticeBoardIdx = 'noticeBoardIdx'
+		 *  ORDER BY idx asc 
 		 */
 	  	return queryFactory 
 	  			.selectFrom(noticeBoardAttachedFile)
-	  			.where(noticeBoardAttachedFile.noticeBoardIdx.eq(noticeBoardIdx)) 
+	  			.where(noticeBoardAttachedFile.noticeBoardIdx.eq(noticeBoardIdx))
+	  			.orderBy(noticeBoardAttachedFile.idx.asc())
 	  			.fetch(); 
 	  }
 

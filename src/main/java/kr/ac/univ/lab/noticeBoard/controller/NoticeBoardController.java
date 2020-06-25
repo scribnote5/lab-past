@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import kr.ac.univ.lab.common.dto.SearchDto;
-import kr.ac.univ.lab.common.util.CommentAccess;
+import kr.ac.univ.lab.common.error.exception.UserAccessException;
+import kr.ac.univ.lab.common.util.AccessCheck;
+import kr.ac.univ.lab.common.util.CommonUtil;
+import kr.ac.univ.lab.member.service.MemberService;
 import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardCommentDto;
 import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardDto;
 import kr.ac.univ.lab.noticeBoard.mapper.NoticeBoardMapper;
@@ -44,8 +47,13 @@ public class NoticeBoardController {
 	@GetMapping("/form{idx}")
 	public String noticeBoardForm(@RequestParam(value = "idx", defaultValue = "0") Long idx, Model model) {
 		NoticeBoardDto noticeBoardDto;
-		
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardService.findNoticeBoardByIdx(idx));
+		noticeBoardDto.setAccess(AccessCheck.isAccess(noticeBoardDto.getCreatedBy())); // 접근 권한 여부 확인
+		
+		if(!CommonUtil.isEmpty(noticeBoardDto.getIdx()) && !noticeBoardDto.isAccess()) {
+			throw new UserAccessException();
+		}
+		
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByNoticeBoardIdx(idx));
 		
 		model.addAttribute("noticeBoardDto", noticeBoardDto);
@@ -60,10 +68,10 @@ public class NoticeBoardController {
 		List<NoticeBoardCommentDto> noticeBoardCommentDtoList;
 		
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardService.findNoticeBoardByIdx(idx));
+		noticeBoardDto.setAccess(AccessCheck.isAccess(noticeBoardDto.getCreatedBy())); 	// 접근 권한 여부 확인
+		noticeBoardDto.setAnonymousUser(AccessCheck.isAnonymousUser()); // 익명 사용자 여부 확인
 		noticeBoardDto = NoticeBoardMapper.INSTANCE.toDto(noticeBoardDto, noticeBoardAttachedFileService.findAttachedFileByNoticeBoardIdx(idx));
-		// 익명 사용자 여부 결정
-		noticeBoardDto.setAnonymousUser(CommentAccess.isAnonymousUser());
-
+		
 		noticeBoardCommentDtoList = noticeBoardCommentService.findAllByNoticeBoardIdxOrderByCreatedDateDesc(idx);
 		
 		model.addAttribute("noticeBoardDto", noticeBoardDto);

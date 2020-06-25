@@ -29,6 +29,7 @@ public class NoticeBoard extends GeneralAudit {
 	@Enumerated(EnumType.STRING)
 	private ActiveStatus activeStatus;
 
+	// 수정: default value
 	@Column
 	private Long viewCount;
 

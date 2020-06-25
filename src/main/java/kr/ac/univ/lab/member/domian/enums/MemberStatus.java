@@ -2,7 +2,7 @@ package kr.ac.univ.lab.member.domian.enums;
 
 public enum MemberStatus {
 	ATTENDING("attending"),
-	GRADUATION("graduation");
+	GRADUATED("graduated");
 	
 	private String status;
 

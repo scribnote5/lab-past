@@ -2,7 +2,6 @@ package kr.ac.univ.lab.common.dto;
 
 import java.time.LocalDateTime;
 
-import kr.ac.univ.lab.member.domian.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,4 +17,5 @@ public class CommonDto {
 	private LocalDateTime lastModifiedDate;
 	private String createdBy;
 	private String lastModifiedBy;
+	private boolean isAccess;
 }

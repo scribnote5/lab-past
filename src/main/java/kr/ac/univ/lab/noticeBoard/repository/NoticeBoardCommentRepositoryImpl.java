@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import kr.ac.univ.lab.member.domian.MemberAttachedFile;
-import kr.ac.univ.lab.noticeBoard.domain.QNoticeBoardAttachedFile;
 import kr.ac.univ.lab.noticeBoard.domain.QNoticeBoardComment;;
 
 @Repository

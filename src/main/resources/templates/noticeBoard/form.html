@@ -24,8 +24,8 @@
     	<form name="form" id="form" th:object="${noticeBoardDto}" action="#"  >
     
         <div class="page-header">
-            <h1 th:if="!*{idx}">게시글 등록</h1>
-            <h1 th:if="*{idx}">게시글 수정</h1>
+            <h1 th:if="!*{idx}">Post Register</h1>
+            <h1 th:if="*{idx}">Post Update</h1>
         </div>
         <br/>
         <table class="table" style="table-layout:fixed; word-break:break-all;">
@@ -34,46 +34,48 @@
 			    <col width="85%" />
 			</colgroup>
             <tr>
-                <th style="padding:13px 0 0 15px">게시판 선택</th>
+                <th style="padding:13px 0 0 15px">Active Status</th>
                 <td>
                     <div class="pull-left">
                         <select name="activeStatus" th:field="*{activeStatus}" class="form-control input-sm">
-                            <option th:value="ACTIVE">게시중</option>
-                            <option th:value="INACTIVE">비게시중</option>
+                            <option th:value="ACTIVE">Active</option>
+                            <option th:value="INACTIVE">Inactive</option>
                         </select>
                     </div>
                 </td>
             </tr>
             <tr th:if="*{idx}">
-                <th style="padding:13px 0 0 15px;">생성 날짜</th>
+                <th style="padding:13px 0 0 15px;">Created Date</th>
                 <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(createdDate,'yyyy-MM-dd HH:mm')}"/></td>
             </tr>
             <tr th:if="*{idx}">
-                <th style="padding:13px 0 0 15px;">생성 날짜</th>
+                <th style="padding:13px 0 0 15px;">Modified Date</th>
                 <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(lastModifiedDate,'yyyy-MM-dd HH:mm')}"/></td>
             </tr>
             <tr>
-                <th style="padding:13px 0 0 15px;">제목</th>
-                <td><input type="text" name="title" class="col-md-1 form-control input-sm" th:value="*{title}"/></td>
+                <th style="padding:13px 0 0 15px;">Title</th>
+                <td><input type="text" name="title" id="title" class="col-md-1 form-control input-sm" th:value="*{title}"/></td>
             </tr>
             <tr>
-                <th style="padding:13px 0 0 15px;">내용</th>
-                <!-- <td><textarea name="content" class="col-md-1 form-control input-sm" maxlength="140" rows="7" style="height: 250px;" th:text="*{content}"></textarea></td> -->
-                <!-- summernote -->
-                <td><textarea name="content" id="summernote" class="summernote" th:text="*{content}"></textarea></td>
+                <td colspan="2"><textarea name="content" id="summernote" class="summernote" th:text="*{content}"></textarea></td>
             </tr>
             <tr>
-                <th style="padding:13px 0 0 15px;">파일</th>
-                <td><input type="file" multiple="multiple" name="file" id="file"/></td>
+                <th style="padding:13px 0 0 15px;">Attached File</th>
+                <td>
+                	<input type="file" multiple="multiple" name="file" id="file"/>
+                	<div id="fileDrop" class="fileDrop"></div>
+                </td>
                 <!-- <td><input type="file" name="file"/></td> -->
             </tr>
             <tr>
-                <th style="padding:13px 0 0 15px;">첨부 파일</th>
+                <th style="padding:13px 0 0 15px;">Uploaded Attached File</th>
                 <td>
+                	<div > Total file size(up to 20 MB): <span id="totalFileSize"> 0 MB</span></div>
+                	<div id="attachedFileList"></div>
                 	<div id="attachedFileList" th:each="attachedFile : *{attachedFileList}" > 
 	                	<div th:id="imgData + ${attachedFileStat.index}" >
 					    	<!-- <span th:attr="onclick=|location.href='/api/attachedFiles/download/${attachedFile.savedFileName}'|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize} + '&nbsp;'"></span> -->
-					    	<span th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + '&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize} + '&nbsp;'"></span>
+					    	<span th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + ',&nbsp;&nbsp;' + 'File Size: ' + ${attachedFile.fileSize} + '&nbsp;'"></span>
 				    		<img th:attr="src=@{|/images/cancel.jpg|}, onclick=|deleteFile('${attachedFileStat.index}','${attachedFile.idx}','${attachedFile.savedFileName}')|" th:style="'width: 15px; height: 15px'" />
 				    	</div>
 			    	</div>
@@ -85,18 +87,13 @@
             </tr>
             
         </table> 
-        
-        <!-- 파일을 업로드할 영역 -->
-	    <div id="fileDrop" class="fileDrop"></div>
-	    <!-- 업로드된 파일 목록 -->
-	    
  
         <div class="pull-left">
-            <a href="/notice-board/list" class="btn btn-default">목록으로</a>
+            <a href="/notice-board/list" class="btn btn-default">Move to List</a>
         </div>
         <div class="pull-right">
-            <button th:if="!*{idx}" id="insert" type="button" class="btn btn-primary">저장</button>
-            <button th:if="*{idx}" id="update" type="button" class="btn btn-info">수정완료</button>
+            <button th:if="!*{idx}" id="insert" type="button" class="btn btn-primary">Register</button>
+            <button th:if="*{idx}" id="update" type="button" class="btn btn-info">Update</button>
         </div>
         
         <!-- input type="hidden" -->
@@ -114,253 +111,241 @@
   
 	<!-- javascript -->
 	<script>
-	
-	var insertFileArray = [];
-	var deleteFileArray = [];
-	var imgDataId = 0;
-	
-	$(document).ready(function() {
-		<!-- summernote setting -->
-		  $('#summernote').summernote({
-			height: 250,	// 에디터 높이
-			minHeight: null,	// 최소 높이
-			maxHeight: null,	// 최대 높이
-			// focus: true,	// 에디터 로딩후 포커스를 맞출지 여부
-			lang: "ko-KR",// 한글 설정
-			placeholder: '최대 2048자까지 쓸 수 있습니다.'	//placeholder 설정
-			
+		var insertFileArray = [];
+		var deleteFileArray = [];
+		var imgDataId = 0;
+		var totalFileSize = 0;
+		
+		$(document).ready(function() {
+			<!-- summernote setting -->
+			  $('#summernote').summernote({
+				height: 250,	// 에디터 높이
+				minHeight: null,	// 최소 높이
+				maxHeight: null,	// 최대 높이
+				// focus: true,	// 에디터 로딩후 포커스를 맞출지 여부
+				lang: "ko-KR",// 한글 설정
+				placeholder: "The editor's max input size of bytes is 16777215."	//placeholder 설정
+				
+			});
+			  
+		  	<!-- File Drop -->
+			$("#fileDrop").on("dragenter dragover", function(event){
+		        event.preventDefault(); // 기본 효과를 막음
+		    });
 		});
-		  
-	  	<!-- File Drop -->
-		$("#fileDrop").on("dragenter dragover", function(event){
-	        event.preventDefault(); // 기본 효과를 막음
-	    });
-	});
-	
-	/* input tag event */
-	$('#file').change(function () {
-		var files = document.getElementsByName("file")[0].files;	
 		
-		for (var i = 0; i < files.length; i++) {
-			if(validationFile(files[i])) {
-	        	insertFileArray.push(files[i]);
-	        	        	
-				$("#attachedFileList").prepend('<div id="imgData' + imgDataId + '">' 
-						   + '<span>' 
-						   + files[i].name + "&nbsp;&nbsp; 파일 크기: " + convertFileSize(files[i].size) + "&nbsp;"
-						   + '<img src="/images/cancel.jpg" style="width: 15px; height: 15px" onClick="cancelFile(' + imgDataId + ')" />' 
-						   + '</span>'
-						   + '</div>');
-				
-				imgDataId++;
-			}
-		}
-	});
-	
-	/* Drag & drop event */
-	$("#fileDrop").on("drop", function(event){
-        event.preventDefault(); // 기본 효과를 막음
-        // 드래그된 파일의 정보
-        // event : jQuery의 이벤트
-     	// originalEvent : javascript의 이벤트
-        var files = event.originalEvent.dataTransfer.files;
-	
-        for (var i = 0; i < files.length; i++) {
-        	if(validationFile(files[i])) {
-	        	insertFileArray.push(files[i]);
-	        	        	
-	        	$("#attachedFileList").prepend('<div id="imgData' + imgDataId + '">' 
-						   + '<span>' 
-						   + files[i].name + "&nbsp;&nbsp; 파일 크기: " + convertFileSize(files[i].size) + "&nbsp;"
-						   + '<img src="/images/cancel.jpg" style="width: 15px; height: 15px" onClick="cancelFile(' + imgDataId + ')" />' 
-						   + '</span>'
-						   + '</div>');
-	        	
-	        	imgDataId++;
-        	}
-        }
-	});
-	
-	/* file 검사 */
-	function validationFile(file) {
-		// 파일 이름 
-		var fileName = file.name;
-		// 파일 확장자명(대문자를 소문자로 변경)
-		var extensionName = fileName.substring( fileName.lastIndexOf(".")).toLowerCase();
-		// 업로드 불가능한 확장자명
-		var excludeArray = [ ".exe", ".sh", ".com" ];
-		// 첨부 파일 크기
-		var fileSize = file.size;
-		// 업로드 가능한 파일 크기: 20 MB                                                                                                                           
-		var maxSize = 20 * 1024 * 1024
-	                                                                                                                             
-		if (fileName != "") {                                                                                                                          
-			/* 확장자명 검사 */
-			for (var i = 0; i < excludeArray.length; i++) {                                                                                           
-				if (extensionName == excludeArray[i]) {                                                                                               
-					alert("첨부 파일 업로드를 지원하지 않는 확장자입니다.");
-					$("#file").val('');                                                                                                          
-					$("#file").replaceWith($("#file").clone(true));                                                                                    
+		/* input tag event */
+		$('#file').change(function () {
+			var files = document.getElementsByName("file")[0].files;
+			
+			for (var i = 0; i < files.length; i++) {
+				if(isValidFile(files[i])) {
+		        	insertFileArray.push(files[i]);
+		        	document.getElementById("totalFileSize").innerHTML = convertFileSize(totalFileSize);        	
+		        	
+					$("#attachedFileList").append('<div id="imgData' + imgDataId + '">' 
+							   + '<span>' 
+							   + files[i].name + ",&nbsp;&nbsp; File Size: " + convertFileSize(files[i].size) + "&nbsp;"
+							   + '<img src="/images/cancel.jpg" style="width: 15px; height: 15px" onClick="cancelFile(' + imgDataId + ')" />' 
+							   + '</span>'
+							   + '</div>');
 					
-					return false;                                                                                                                            
-				}                                                                                                                                      
-			} 
-
-			/* 파일 크기 검사 */
-			if (fileSize > maxSize) {
-				alert("첨부 파일 업로드는 20 MB 크기 이내로  가능합니다.");
-				$("#file").replaceWith($("#file").clone(true));
-				$("#file").val('');
-				
-				return false;
+					imgDataId++;	
+				} else {
+					return false;
+				}
 			}
+		});
+		
+		/* Drag & drop event */
+		$("#fileDrop").on("drop", function(event){
+	        event.preventDefault(); // 기본 효과를 막음
+	        // 드래그된 파일의 정보
+	        // event : jQuery의 이벤트
+	     	// originalEvent : javascript의 이벤트
+	        var files = event.originalEvent.dataTransfer.files;
+		
+	        for (var i = 0; i < files.length; i++) {
+	        	if(isValidFile(files[i])) {
+		        	insertFileArray.push(files[i]);
+		        	document.getElementById("totalFileSize").innerHTML = convertFileSize(totalFileSize);
+		        	
+		        	$("#attachedFileList").append('<div id="imgData' + imgDataId + '">' 
+							   + '<span>' 
+							   + files[i].name + ",&nbsp;&nbsp; File Size: " + convertFileSize(files[i].size) + "&nbsp;"
+							   + '<img src="/images/cancel.jpg" style="width: 15px; height: 15px" onClick="cancelFile(' + imgDataId + ')" />' 
+							   + '</span>'
+							   + '</div>');
+		        	
+		        	imgDataId++;
+	        	} else {
+					return false;
+				}
+	        }
+		});
+	
+		// 새로 업로드한 파일을 최소하는 경우
+		function cancelFile(fileId) {
+			$('#imgData' + fileId).remove();
+			
+			insertFileArray[fileId] = null;
 		}
 		
-		return true;
-    }
-	
-	// 새로 업로드한 파일을 최소하는 경우
-	function cancelFile(fileId) {
-		$('#imgData' + fileId).remove();
-		
-		insertFileArray[fileId] = null;
-	}
-	
-	// 기존 업로드한 파일을 삭제하는 경우
-	function deleteFile(fileId, idx, savedFileName) {
-		$('#imgData' + fileId).remove();
-		
-		deleteFileArray.push(idx);
-	}
-
+		// 기존 업로드한 파일을 삭제하는 경우
+		function deleteFile(fileId, idx, savedFileName) {
+			$('#imgData' + fileId).remove();
+			
+			deleteFileArray.push(idx);
+		}
 	</script>
+	
     <script th:if="!${noticeBoardDto?.idx}">
-   		$('#insert').click(function () {
-   			// 게시글 업로드
+    	$('#insert').click(function () {
+			// javascript validation(input tag Name, length || size, message name )
+   			if(!(validationByLength("title", 50, "title") && validationBySize("content", 16777215, "content"))) {
+   				return false;
+   			}
+
    			var jsonData = $("#form").serializeObject();
  	       	var noticeBoardIdx;
- 	       	
+ 	    	
+ 	       	// 게시글 업로드
             $.ajax({
 				url: "/api/notice-boards",
 				type: "post",
                 data: JSON.stringify(jsonData),
 				dataType: "text",
 				contentType: "application/json",
-				async: false,
 								
-                success: function (msg) {
-                	noticeBoardIdx = msg;                    
+                success: function(msg) {
+                	noticeBoardIdx = msg;
+                	
+                	var formData = new FormData();
+                	
+           			for(var i = 0; i < insertFileArray.length; i++) {
+           				formData.append("files", insertFileArray[i]);
+           			}
+           			
+           			formData.append("idx", noticeBoardIdx);
+          			
+           			// 파일 업로드
+        			$.ajax({
+        				url: "/api/notice-boards/attachedFile",
+        				type: "post",
+        				data: formData,
+        				dataType: "text",
+        	            enctype: 'multipart/form-data',
+        	            processData: false,
+        	            contentType: false,
+        	            
+        	            success: function(msg){
+        	                location.href = '/notice-board/list';
+        	            },
+        	            error: function (msg) {
+        	            	validatioMessageAlert((JSON.parse(msg.responseText)));
+        	            	
+        	            	// 게시글 삭제
+        	           		$.ajax({
+        	                    url: "/api/notice-boards/" + noticeBoardIdx,
+        	                    type: "delete",
+        	                    dataType: "text",
+        	                    contentType: "application/json",
+        	                    
+        	                    success: function () {
+        	                        console.log("NoticeBoard delete success.");
+        	                    },
+        	                    error: function () {
+        	                    	console.log("NoticeBoard delete fail.");
+        	                    }
+        	                });
+        	            }
+                	});
               	},
-                error: function () {
-                    alert('게시글 업로드 실패!');
-               	}
+              	error: function(msg) {                   
+              		validatioMessageAlert((JSON.parse(msg.responseText)));
+                }
 			});
-   			
-            // 파일 업로드
-   			var formData = new FormData();
-   			
-   			for(var i = 0; i < insertFileArray.length; i++) {
-   				formData.append("files", insertFileArray[i]);
-   			}
-   			
-   			formData.append("idx", noticeBoardIdx);
-   		   			
-			$.ajax({
-				url: "/api/notice-boards/attachedFile",
-				type: "post",
-				data: formData,
-				dataType: "text",
-	            enctype: 'multipart/form-data',
-	            processData: false,
-	            contentType: false,
-	                      
-	            success: function(msg){
-	                location.href = '/notice-board/list';
-	            },
-                error: function () {
-                    alert('파일 업로드 실패!');
-               	}
-        	}); 
+            
    		});
     </script>
+    
     <script th:if="${noticeBoardDto?.idx}" th:inline="javascript">
     	$('#update').click(function () {
-        	// 게시글 수정
+    		// javascript validation(input tag Name, length || size, message name )
+   			if(!(validationByLength("title", 50, "title") && validationBySize("content", 16777215, "content"))) {
+   				return false;
+   			}
+    		
     		var jsonData = $("#form").serializeObject();
         	var idx = document.getElementsByName('idx')[0].value;
         	
+        	// 게시글 수정
             $.ajax({
                 url: "/api/notice-boards/" + document.getElementsByName('idx')[0].value,
                 type: "put",
                 data: JSON.stringify(jsonData),
                 dataType: "text",
                 contentType: "application/json",
-                async: false,
                 
                 success: function () {
-                    
+                	// 만일 파일이 수정되지 않은 경우 '파일 업로드' 및 '파일 삭제'를 수행하지 않음
+        			if(insertFileArray.length == 0 && deleteFileArray.length == 0) {
+        				location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;     
+        			}
+                 	
+        			// 파일 삭제  
+                    if(deleteFileArray.length > 0) {
+            			$.ajax({
+               				url: "/api/notice-boards/attachedFile",
+               				type: "delete",
+               				data: JSON.stringify(deleteFileArray),
+               				contentType: "application/json",
+ 
+               	            success: function(){
+               	            	console.log("AttachedFile delete success."); 
+               	    			
+               	            	if(insertFileArray.length == 0) 
+               	            		location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;
+               	            	
+               	            },
+               	            error: function () {
+               	            	console.log("AttachedFile delete fail.");
+               	           	}
+               	    	});
+                    }
+        			
+                 	// 파일 업로드
+                    if(insertFileArray.length > 0) {
+               			var formData = new FormData();
+               			
+               			for(var i = 0; i < insertFileArray.length; i++) {
+               				formData.append("files", insertFileArray[i]);
+               			}
+               			
+               			formData.append("idx", idx);
+               			
+            			$.ajax({
+            				url: "/api/notice-boards/attachedFile",
+            				type: "post",
+            				data: formData,
+            				dataType: "text",
+            	            enctype: 'multipart/form-data',
+            	            processData: false,
+            	            contentType: false,
+            	                      
+            	            success: function(){
+            	            	location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;    	
+            	            }, 
+            	            error: function (msg) {
+            	            	validatioMessageAlert((JSON.parse(msg.responseText)));
+            	            } 
+                    	});
+                    }                	
                 },
                 error: function () {
-                    alert('게시글 수정 실패!');
+                	validatioMessageAlert((JSON.parse(msg.responseText)));
                 }
-            });
-         
-         	// 만일 파일이 수정되지 않은 경우 '파일 업로드' 및 '파일 삭제'를 수행하지 않음
-			if(insertFileArray.length == 0 && deleteFileArray.length == 0) {
-				location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;     
-				
-				return true;
-			}
-         	
-			// 파일 삭제  
-            if(deleteFileArray.length > 0) {
-    			$.ajax({
-       				url: "/api/notice-boards/attachedFile",
-       				type: "delete",
-       				data: JSON.stringify(deleteFileArray),
-       				contentType: "application/json",
-       				async: false,
-       				
-       	            success: function(){
-       	            	   
-       	            },
-       	            error: function () {
-       	                alert('파일 삭제 실패!');
-       	           	}
-       	    	});
-            }
-         	
-			// 파일 업로드
-            if(insertFileArray.length > 0) {
-       			var formData = new FormData();
-       			
-       			for(var i = 0; i < insertFileArray.length; i++) {
-       				formData.append("files", insertFileArray[i]);
-       			}
-       			
-       			formData.append("idx", idx);
-       			
-    			$.ajax({
-    				url: "/api/notice-boards/attachedFile",
-    				type: "post",
-    				data: formData,
-    				dataType: "text",
-    	            enctype: 'multipart/form-data',
-    	            processData: false,
-    	            contentType: false,
-    	                      
-    	            success: function(msg){
-    	                
-    	            }, 
-                    error: function () {
-                        alert('파일 업로드 실패!');
-                   	}
-            	}); 	
-            }
-			
-            var timer = setInterval(function() { //실행할 스크립트 
-            	location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value; 
-            }, 1000);
+            });      	
     	});
     </script>
     

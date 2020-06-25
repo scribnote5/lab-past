@@ -14,11 +14,11 @@
 		<form name="form" id="form" th:object="${searchDto}" action="#"  >
 	
 		<div class="page-header">
-			<h1>게시글 목록</h1>
+			<h1>Member List</h1>
 		</div>
 		
 		<div class="pull-right" style="width: 100px; margin: 10px 0;">
-			<button id="search" type="button" class="btn btn-primary btn-block">검색</button>
+			<button id="search" type="button" class="btn btn-primary btn-block">Search</button>
 		</div>
 		
 		<div class="pull-right" style="width: 200px; margin: 10px 10px; ">
@@ -27,9 +27,9 @@
 		
 		<div class="pull-right" style="width: 100px; margin: 10px 10px; ">
 			<select name="searchType" th:field="*{searchType}" class="form-control input-sm">
-	            <option th:value="MEMBER_ID">아이디</option>
-	            <option th:value="KOREAN_NAME">이름</option>
-	            <option th:value="EMAIL">이메일</option>
+	            <option th:value="MEMBER_ID">Member Id</option>
+	            <option th:value="KOREAN_NAME">Name</option>
+	            <option th:value="EMAIL">Email</option>
 	        </select>
 		</div>
 		
@@ -38,14 +38,14 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th class="col-md-1">idx</th>
-						<th class="col-md-1">아이디</th>
-						<th class="col-md-1">이름</th>
-						<th class="col-md-2">이메일</th>
-						<th class="col-md-2">유형</th>
-						<th class="col-md-1">권한 유형</th>
-						<th class="col-md-2">생성 날짜</th>
-						<th class="col-md-2">수정 날짜</th>
+						<th class="col-md-1">No.</th>
+						<th class="col-md-1">Member Id</th>
+						<th class="col-md-1">Name</th>
+						<th class="col-md-2">Email</th>
+						<th class="col-md-2">Member Type</th>
+						<th class="col-md-1">Authority Type</th>
+						<th class="col-md-2">Created Date</th>
+						<th class="col-md-2">Modified Date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -58,25 +58,21 @@
 						</td>
 						<td th:text="${memberDto.koreanName}"></td>
 						<td th:text="${memberDto.email}"></td>
+
+						<td th:if="${memberDto.memberType?.name() == 'FACULTY'}" th:text="Faculty"></td>
+						<td th:if="${memberDto.memberType?.name() == 'FULL_TIME_PhD'}" th:text="'Ph.d. ' + '-' + ' Full Time'"></td>
+						<td th:if="${memberDto.memberType?.name() == 'PART_TIME_PhD'}" th:text="'Ph.d.' + '-' + ' Part Time'"></td>
+						<td th:if="${memberDto.memberType?.name() == 'FULL_TIME_MS'}" th:text="'M.S.' + '-' + ' Full Time'"></td>
+						<td th:if="${memberDto.memberType?.name() == 'PART_TIME_MS'}" th:text="'M.S.' + '-' + ' Part Time'"></td>
+						<td th:if="${memberDto.memberType?.name() == 'B.S.'}" th:text="'B.S.'"></td>
 						
-						
-						<td th:if="${memberDto.memberType?.name() == 'FACULTY'}" th:text="교수"></td>
-						<td th:if="${memberDto.memberType?.name() == 'FULL_TIME_PhD'}" th:text="'박사 ' + '-' + ' 풀타임'"></td>
-						<td th:if="${memberDto.memberType?.name() == 'PART_TIME_PhD'}" th:text="'박사   ' + '-' + ' 파트타임'"></td>
-						<td th:if="${memberDto.memberType?.name() == 'FULL_TIME_MS'}" th:text="'석사 ' + '-' + ' 풀타임'"></td>
-						<td th:if="${memberDto.memberType?.name() == 'PART_TIME_MS'}" th:text="'석사 ' + '-' + ' 파트타임'"></td>
-						<td th:if="${memberDto.memberType?.name() == 'BS'}" th:text="'학부' + '연구생"></td>
-						
-						<td th:if="${memberDto.authorityType?.name() == 'ROOT'}" th:text="root"></td>
-						<td th:if="${memberDto.authorityType?.name() == 'MANAGER'}" th:text="관리자"></td>
-						<td th:if="${memberDto.authorityType?.name() == 'GENERAL'}" th:text="일반회원"></td>
-						<td th:if="${memberDto.authorityType?.name() == 'NON_MEMBER'}" th:text="비회원"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'ROOT'}" th:text="Root"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'MANAGER'}" th:text="Manager"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'GENERAL'}" th:text="General"></td>
+						<td th:if="${memberDto.authorityType?.name() == 'NON_MEMBER'}" th:text="Non Member"></td>
 		
-						
-						
 						<td th:text="${#temporals.format(memberDto.createdDate,'yyyy-MM-dd HH:mm')}"></td>
-						<td th:text="${#temporals.format(memberDto.lastModifiedDate,'yyyy-MM-dd HH:mm')}"></td>
-						
+						<td th:text="${#temporals.format(memberDto.lastModifiedDate,'yyyy-MM-dd HH:mm')}"></td>			
 					</tr>
 				</tbody>
 			</table>
@@ -84,7 +80,7 @@
 		<br>
 		
 		<div class="pull-right" style="width: 100px; margin: 10px 0;">
-			<a href="/member/form" class="btn btn-primary btn-block">등록</a>
+			<a href="/member/form" class="btn btn-primary btn-block">Register</a>
 		</div>
 
 		<!-- Pagination -->

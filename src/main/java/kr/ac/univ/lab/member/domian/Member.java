@@ -9,6 +9,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import kr.ac.univ.lab.common.domain.GeneralAudit;
 import kr.ac.univ.lab.common.domain.enums.ActiveStatus;
 import kr.ac.univ.lab.member.domian.enums.AuthorityType;
@@ -50,6 +52,9 @@ public class Member extends GeneralAudit {
 
 	@Column
 	private String email;
+	
+	@Column
+	private String privateEmail;
 
 	@Column
 	private String messangerId;
@@ -75,7 +80,7 @@ public class Member extends GeneralAudit {
 	private LocalDate admissionDate;
 
 	@Column
-	private LocalDate graduationDate;
+	private LocalDate graduatedDate;
 	
 	@Column
 	private String webPage;
@@ -102,13 +107,14 @@ public class Member extends GeneralAudit {
 
 	
 	@Builder
-	public Member(String memberId, String password, String koreanName, String englishName, GenderType gender, LocalDate birthDate, String email, String messangerId, String contact, MemberType memberType, MemberStatus memberStatus, String introduction, LocalDate admissionDate, LocalDate graduationDate, String webPage, String workplace, ActiveStatus activeStatus, AuthorityType authorityType, LocalDateTime lastLoginDate ) {
+	public Member(String memberId, String password, String koreanName, String englishName, GenderType gender, LocalDate birthDate, String email, String privateEmail, String messangerId, String contact, MemberType memberType, MemberStatus memberStatus, String introduction, LocalDate admissionDate, LocalDate graduatedDate, String webPage, String workplace, ActiveStatus activeStatus, AuthorityType authorityType, LocalDateTime lastLoginDate ) {
 		this.memberId = memberId;
 		this.password = password;
 		this.koreanName = koreanName;
 		this.englishName = englishName;
 		this.gender = gender;
 		this.birthDate = birthDate;
+		this.privateEmail = privateEmail;
 		this.email = email;
 		this.messangerId = messangerId;
 		this.contact = contact;
@@ -118,19 +124,29 @@ public class Member extends GeneralAudit {
 		this.webPage = webPage;
 		this.workplace = workplace;
 		this.admissionDate = admissionDate;
-		this.graduationDate = graduationDate;
+		this.graduatedDate = graduatedDate;
 		this.activeStatus = activeStatus;
 		this.authorityType = authorityType;
 		this.lastLoginDate = lastLoginDate;
 	}
 	
 	public void update(Member member) {
-		this.memberId = member.getMemberId();
-		this.password = member.getPassword();
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+		if(!"".equals(member.getPassword())) {
+			this.password = passwordEncoder.encode(member.getPassword());
+		}
+		
+		System.out.println(this.privateEmail);
+		System.out.println(member.getPrivateEmail());
+		System.out.println(this.privateEmail);
+		
+		this.memberId = member.getMemberId();	
 		this.koreanName = member.getKoreanName();
 		this.englishName = member.getEnglishName();
 		this.gender = member.getGender();
 		this.birthDate = member.getBirthDate();
+		this.privateEmail = getPrivateEmail();
 		this.email = member.getEmail();
 		this.messangerId = member.getMessangerId();
 		this.contact = member.getContact();
@@ -140,7 +156,7 @@ public class Member extends GeneralAudit {
 		this.webPage = member.getWebPage();
 		this.workplace = member.getWorkplace();
 		this.admissionDate = member.getAdmissionDate();
-		this.graduationDate = member.getGraduationDate();
+		this.graduatedDate = member.getGraduatedDate();
 		this.activeStatus = member.getActiveStatus();
 		this.authorityType = member.getAuthorityType();
 	}

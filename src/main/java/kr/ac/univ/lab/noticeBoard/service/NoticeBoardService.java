@@ -30,7 +30,7 @@ public class NoticeBoardService {
 		Page<NoticeBoard> noticeBoardList = null;
 		Page<NoticeBoardDto> noticeBoardDtoList = null;
 
-		pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "createdDate");
+		pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "idx");
 		
 		switch(searchDto.getSearchType()) {
 		case TITLE:

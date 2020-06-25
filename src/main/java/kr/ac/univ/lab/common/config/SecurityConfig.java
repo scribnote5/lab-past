@@ -18,8 +18,8 @@ import org.springframework.security.web.header.writers.frameoptions.WhiteListedA
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import kr.ac.univ.lab.common.exception.CustomAuthenticationFailureHandler;
-import kr.ac.univ.lab.common.exception.CustomAuthenticationSuccessHandler;
+import kr.ac.univ.lab.common.error.handler.authentication.CustomAuthenticationFailureHandler;
+import kr.ac.univ.lab.common.error.handler.authentication.CustomAuthenticationSuccessHandler;
 import kr.ac.univ.lab.member.service.MemberService;
 import lombok.AllArgsConstructor;
 
@@ -39,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // static 디렉터리의 하위 파일 목록은 인증 무시 ( = 항상통과 )
         web.ignoring().antMatchers("/css/**", "/js/**", "/imgages/**", "/summernote/**");
     }
-
   
     @Override
     protected void configure(HttpSecurity http) throws Exception {

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
+<title>Publication Read</title>
+</head>
+<body>
+	<!-- header -->
+    <div th:replace="layout/header::header"></div>
+
+    <div class="container">
+    	<form id="form" th:object="${publicationDto}" action="#"  >
+    
+        <div class="page-header">
+            <h1>게시글 읽기</h1>
+        </div>
+        <br/>
+        <table class="table" style="table-layout:fixed; word-break:break-all;">
+        	<colgroup>
+			    <col width="15%" />
+			    <col width="85%" />
+			</colgroup>
+            <tr>
+                <th style="padding:13px 0 0 15px;">생성날짜</th>
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(createdDate,'yyyy-MM-dd HH:mm')}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">수정날짜</th>
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(lastModifiedDate,'yyyy-MM-dd HH:mm')}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">제목</th>
+                <td><span id="title" class="col-md-1 form-control input-sm" th:text="*{title}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">저자</th>
+                <td><span id="authors" class="col-md-1 form-control input-sm" th:text="*{authors}"></span></td>
+            </tr>
+            
+            <tr>
+                <th style="padding:13px 0 0 15px">publicationType</th>
+                <td>
+                    <div class="pull-left">
+                        <span class="col-md-1 form-control input-sm" th:if="*{publicationType?.name() == 'JOURNAL'}" th:text="Journal"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{publicationType?.name() == 'POSTER'}" th:text="Poster"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{publicationType?.name() == 'REGULAR'}" th:text="Regular"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{publicationType?.name() == 'DEMO'}" th:text="Demo"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{publicationType?.name() == 'WORKSHOP'}" th:text="Workshop"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{publicationType?.name() == 'WORKINPROCESS'}" th:text="Work in Process"> </span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px">kindType</th>
+                <td>
+                    <div class="pull-left">
+                        <span class="col-md-1 form-control input-sm" th:if="*{kindType?.name() == 'DOMESTIC'}" th:text="Domestic"> </span>
+                        <span class="col-md-1 form-control input-sm" th:if="*{kindType?.name() == 'INTERNATIONAL'}" th:text="International"> </span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">publishedIn</th>
+                <td><span id="publishedIn" class="col-md-1 form-control input-sm" th:text="*{publishedIn}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">impactFactor</th>
+                <td><span id="impactFactor" class="col-md-1 form-control input-sm" th:text="*{impactFactor}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">publishedDate</th>
+               
+                <td><input type="text" class="col-md-1 form-control input-sm" readonly="readonly" th:value="*{#temporals.format(publishedDate,'yyyy-MM-dd')}"/></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">pages</th>
+                <td><span id="pages" class="col-md-1 form-control input-sm" th:text="*{pages}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">volume</th>
+                <td><span id="volume" class="col-md-1 form-control input-sm" th:text="*{volume}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">number</th>
+                <td><span id="number" class="col-md-1 form-control input-sm" th:text="*{number}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">DoiUrl</th>
+                <td><span id="DoiUrl" class="col-md-1 form-control input-sm" th:text="*{DoiUrl}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">ISSN</th>
+                <td><span id="ISSN" class="col-md-1 form-control input-sm" th:text="*{issn}"></span></td>
+            </tr>
+            <tr>
+                <th style="padding:13px 0 0 15px;">remark</th>
+                <td><span id="remark" class="col-md-1 form-control input-sm" th:text="*{remark}"></span></td>
+            </tr>
+           
+            <tr>
+                <th style="padding:13px 0 0 15px;">첨부 파일</th>
+                <td>
+                	<div id="attachedFileList" th:each="attachedFile : *{attachedFileList}">
+                		<span th:attr="onclick=|location.href='/api/attachedFiles/download/${attachedFile.savedFileName}'|" th:text="${#strings.substringAfter(attachedFile.savedFileName,'_')} + ',&nbsp;&nbsp;' + '파일 크기: ' + ${attachedFile.fileSize}"></span>
+                	</div>
+                </td>        
+            </tr>
+           
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        
+        <div class="pull-left">
+            <a href="/publication/list" class="btn btn-default">목록으로</a>
+        </div>
+        <div class="pull-right">
+        	<a th:href="'/publication/form?idx='+*{idx}" class="btn btn-info"> 수정</a>
+            <button type="button" class="btn btn-danger" id="delete">삭제</button>
+        </div>
+        
+        <!-- input type="hidden" -->
+		<input type="hidden" name="idx" th:value="*{idx}"/>
+        
+        </form>
+    </div>
+    
+	<!-- footer -->
+    <div th:replace="layout/footer::footer"></div>
+	
+    <!-- script file -->
+	<th:block th:replace="layout/script.html"></th:block>
+	
+    <script th:inline="javascript">
+    	$('#delete').click(function () {
+    		if(!confirm("삭제 하시겠습니까?")) {
+        		return true;
+        	}
+    		
+    		// 게시글 삭제
+       		$.ajax({
+                url: "/api/publications/" + document.getElementsByName('idx')[0].value,
+                type: "delete",
+                dataType: "text",
+                contentType: "application/json",
+                
+                success: function () {
+                    alert('게시글 삭제 성공!');
+                    location.href = '/publication/list';
+                },
+                error: function () {
+                    alert('게시글 삭제 실패!');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

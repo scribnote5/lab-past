@@ -6,10 +6,14 @@ spring:
         cache: false
     servlet:
         multipart:
-            file-size-threshold: 1MB
-            location: C:/Temp
-            max-file-size: 100MB
-            max-request-size: 100MB    
+            # 한개의 파일의 최대 크기
+            max-file-size: 20MB
+            # form-data 요청에 따른 모든 파일의 최대 크기
+            max-request-size: 20MB
+server:
+    tomcat:
+        max-swallow-size: -1
+            
 ---
 spring:
     profiles: test

@@ -43,7 +43,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final EnumPath<kr.ac.univ.lab.member.domian.enums.GenderType> gender = createEnum("gender", kr.ac.univ.lab.member.domian.enums.GenderType.class);
 
-    public final DatePath<java.time.LocalDate> graduationDate = createDate("graduationDate", java.time.LocalDate.class);
+    public final DatePath<java.time.LocalDate> graduatedDate = createDate("graduatedDate", java.time.LocalDate.class);
 
     //inherited
     public final NumberPath<Long> idx = _super.idx;
@@ -69,6 +69,8 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath messangerId = createString("messangerId");
 
     public final StringPath password = createString("password");
+
+    public final StringPath privateEmail = createString("privateEmail");
 
     public final StringPath webPage = createString("webPage");
 

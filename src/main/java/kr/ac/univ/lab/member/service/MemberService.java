@@ -38,7 +38,7 @@ public class MemberService implements UserDetailsService {
 		Page<Member> memberList = null;
 		Page<MemberDto> memberDtoList = null;
 				
-		pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "createdDate");
+		pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.Direction.DESC, "idx");
 		
 		switch(searchDto.getSearchType()) {
 		case MEMBER_ID:
@@ -66,8 +66,8 @@ public class MemberService implements UserDetailsService {
         // 비밀번호 암호화
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
-
-        return memberRepository.save(MemberMapper.INSTANCE.toEntity(memberDto)).getIdx();
+ 
+       return memberRepository.save(MemberMapper.INSTANCE.toEntity(memberDto)).getIdx();
     }
 	
 	@Override
@@ -126,10 +126,8 @@ public class MemberService implements UserDetailsService {
 		memberRepository.deleteById(idx);
 	}	
 
-	public boolean findDupulicateMemberById(String memberId) {
-		boolean isDuplicateMemberId = (memberRepository.countByMemberId(memberId) > 0) ? true : false ;
-		
-		return isDuplicateMemberId;
+	public boolean isDupulicationMemberById(String memberId) {		
+		return (memberRepository.countByMemberId(memberId) > 0) ? true : false;
 	}
 	
 	public Member findByMemberId(String memberId) {

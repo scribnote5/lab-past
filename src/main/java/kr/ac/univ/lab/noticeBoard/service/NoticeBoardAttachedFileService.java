@@ -10,7 +10,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.ac.univ.lab.common.error.exception.FileTypeException;
 import kr.ac.univ.lab.common.util.CommonUtil;
+import kr.ac.univ.lab.common.validation.FileValidator;
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoardAttachedFile;
 import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardAttachedFileRepository;
 import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardAttachedFileRepositoryImpl;
@@ -68,6 +70,7 @@ public class NoticeBoardAttachedFileService {
 				// FileCopyUtils.copy(file.getBytes(), savedFile);
 
 				Path path = Paths.get("./upload/" + savedFileName);
+				
 				Files.write(path, file.getBytes());
 
 				uploadFile = NoticeBoardAttachedFile.builder()

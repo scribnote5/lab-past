@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<!-- css -->
+<th:block th:replace="layout/css.html"></th:block>
+
+<title>Publication List</title>
+</head>
+<body>
+	<!-- header -->
+	<div th:replace="layout/header::header"></div>
+
+	<div class="container">
+		<form name="form" id="form" th:object="${searchDto}" action="#"  >
+	
+		<div class="page-header">
+			<h1>게시글 목록</h1>
+		</div>
+		
+		<div class="pull-right" style="width: 100px; margin: 10px 0;">
+			<button id="search" type="button" class="btn btn-primary btn-block">검색</button>
+		</div>
+		
+		<div class="pull-right" style="width: 200px; margin: 10px 10px; ">
+			<input type="text" name="keyword" class="col-md-1 form-control input-sm" th:value="${searchDto?.keyword}"/>
+		</div>
+		
+		<div class="pull-right" style="width: 100px; margin: 10px 10px; ">
+			<select name="searchType" th:field="*{searchType}" class="form-control input-sm">
+	            <option th:value="TITLE">title</option>
+	            <option th:value="AUTHORS">authors</option>
+	            <option th:value="PUBLISHED_IN">published in</option>
+	        </select>
+		</div>
+		
+		<br /> <br /> <br />
+		<div id="mainHide">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th class="col-md-1">idx</th>
+						<th class="col-md-3">제목</th>
+						<th class="col-md-2">저자</th>
+						<th class="col-md-2">학회</th>
+						<th class="col-md-2">출판일</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="publicationDto : ${publicationDtoList}">
+						<td th:text="${publicationDto.idx}"></td>
+						<td>
+							<a th:href="'/publication?idx='+${publicationDto.idx}" th:text="${publicationDto.title}"></a>
+							&nbsp;
+						</td>
+						<td th:text="${publicationDto.authors}"></td>
+						<td th:text="${publicationDto.publishedIn}"></td>
+						<td th:text="${#temporals.format(publicationDto.publishedDate,'yyyy-MM-dd')}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<br>
+		
+		<div class="pull-right" style="width: 100px; margin: 10px 0;">
+			<a href="/publication/form" class="btn btn-primary btn-block">등록</a>
+		</div>
+
+		<!-- Pagination -->
+		<nav aria-label="Page navigation" style="text-align: center;">
+			<ul class="pagination" th:with="startNumber=${T(Math).floor(publicationDtoList.number/10)}*10+1, endNumber=(${publicationDtoList.totalPages} > ${startNumber}+9) ? ${startNumber}+9 : ${publicationDtoList.totalPages}">
+				<li>
+					<a aria-label="Previous" href="/publication/list?page=1">&laquo;</a>
+				</li>
+				<li th:style="${publicationDtoList.first} ? 'display:none'">
+					<a th:href="@{/publication/list(page=${publicationDtoList.number})}">&lsaquo;</a>
+				</li>
+
+				<li th:each="page :${#numbers.sequence(startNumber, endNumber)}" th:class="(${page} == ${publicationDtoList.number}+1) ? 'active'">
+					<a th:href="@{/publication/list(page=${page})}" th:text="${page}"><span class="sr-only"></span></a>
+				</li>
+
+				<li th:style="${publicationDtoList.last} ? 'display:none'">
+					<a th:href="@{/publication/list(page=${publicationDtoList.number}+2)}">&rsaquo;</a>
+				</li>
+				<li>
+					<a aria-label="Next" th:href="@{/publication/list(page=${publicationDtoList.totalPages})}">&raquo;</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- /Pagination -->
+		
+		</form>
+	</div>
+
+	<!-- footer -->
+	<div th:replace="layout/footer::footer"></div>
+	
+	<!-- script file -->
+	<th:block th:replace="layout/script.html"></th:block>
+	
+	<script>
+		$('#search').click(function () {
+			document.form.action = '/publication/list';
+			document.form.method = 'get';
+			document.form.submit();
+		});
+	</script>
+	
+</body>
+</html>

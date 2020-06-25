@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import kr.ac.univ.lab.common.util.CommentAccess;
+import kr.ac.univ.lab.common.util.AccessCheck;
 import kr.ac.univ.lab.common.util.NewIconCheck;
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoardComment;
 import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardCommentDto;
@@ -35,7 +35,7 @@ public class NoticeBoardCommentService {
 		for(NoticeBoardCommentDto noticeBoardCommentDto : noticeBoardCommentDtoList) {	
 			noticeBoardCommentDto.setNewIcon(NewIconCheck.isNew(noticeBoardCommentDto.getCreatedDate()));
 			
-			if(CommentAccess.isAccess(noticeBoardCommentDto.getCreatedBy())) {
+			if(AccessCheck.isAccess(noticeBoardCommentDto.getCreatedBy())) {
 				noticeBoardCommentDto.setAccess(true);
 			} else {
 				noticeBoardCommentDto.setAccess(false);

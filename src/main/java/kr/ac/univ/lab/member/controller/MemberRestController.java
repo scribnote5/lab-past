@@ -1,6 +1,10 @@
 
 package kr.ac.univ.lab.member.controller;
 
+import java.io.IOException;
+
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.ac.univ.lab.common.error.exception.DuplicationMemberIdException;
+import kr.ac.univ.lab.common.error.exception.FileTypeException;
+import kr.ac.univ.lab.common.validation.FileValidator;
 import kr.ac.univ.lab.member.domian.Member;
 import kr.ac.univ.lab.member.dto.MemberDto;
 import kr.ac.univ.lab.member.mapper.MemberMapper;
@@ -31,10 +38,15 @@ public class MemberRestController {
     }
 
 	@PostMapping
-	public ResponseEntity<?> postMember(@RequestBody MemberDto memberDto) {
-//		Long idx = memberService.insertMember(MemberMapper.INSTANCE.toEntity(memberDto));
-		Long idx = memberService.joinUser(memberDto);
+	public ResponseEntity<?> postMember(@RequestBody @Valid MemberDto memberDto) {
+		if(memberService.isDupulicationMemberById(memberDto.getMemberId())) {
+			throw new DuplicationMemberIdException();
+		}
 		
+		System.out.println(memberDto);
+		
+		Long idx = memberService.joinUser(memberDto);
+
 		return new ResponseEntity<>(idx, HttpStatus.CREATED);
 	}
 
@@ -57,16 +69,18 @@ public class MemberRestController {
 	}
 	
 	@GetMapping("/validation/memberId/{memberId}")
-	public ResponseEntity<?> checkDuplicateMemberId(@PathVariable("memberId") String memberId) {
-
-		boolean isDuplicateMemberId = memberService.findDupulicateMemberById(memberId);
-		
-		return new ResponseEntity<>(isDuplicateMemberId, HttpStatus.CREATED);
+	public ResponseEntity<?> checkDuplicateMemberId(@PathVariable("memberId") String memberId) {		
+		return new ResponseEntity<>(memberService.isDupulicationMemberById(memberId), HttpStatus.CREATED);
 	}
 	
 	// 첨부 파일 업로드
 	@PostMapping("/attachedFile")
-	public ResponseEntity<?> uploadAttachedFile(Long idx, MultipartFile[] files) {
+	public ResponseEntity<?> uploadAttachedFile(Long idx, MultipartFile[] files) throws IOException {
+		String fileValidationResult = FileValidator.isImageValid(files);
+		
+		if(!"valid".equals(fileValidationResult))
+			throw new FileTypeException(fileValidationResult);
+		
 		memberAttachedFileService.uploadAttachedFile(idx, files);
 
 		return new ResponseEntity<>("성공!", HttpStatus.CREATED);

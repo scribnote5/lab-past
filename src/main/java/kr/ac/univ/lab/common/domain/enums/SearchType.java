@@ -2,11 +2,15 @@ package kr.ac.univ.lab.common.domain.enums;
 
 public enum SearchType {
 	NONE("none"),
-	TITLE("title"), 
+	TITLE("title"),
 	CONTENT("content"),
+	
 	MEMBER_ID("memberId"),
 	KOREAN_NAME("koreanName"),
-	EMAIL("email")
+	EMAIL("email"),
+	
+	AUTHORS("authors"),
+	PUBLISHED_IN("publishedIn")
 	;
 
 	private String type;

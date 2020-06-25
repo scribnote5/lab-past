@@ -1,15 +1,14 @@
 package kr.ac.univ.lab;
 
+import java.time.LocalDate;
 import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +20,10 @@ import kr.ac.univ.lab.member.domian.enums.MemberType;
 import kr.ac.univ.lab.member.repository.MemberRepository;
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoard;
 import kr.ac.univ.lab.noticeBoard.repository.NoticeBoardRepository;
+import kr.ac.univ.lab.publication.domain.Publication;
+import kr.ac.univ.lab.publication.domain.enums.KindType;
+import kr.ac.univ.lab.publication.domain.enums.PublicationType;
+import kr.ac.univ.lab.publication.repository.PublicationRepository;
 
 @RestController
 @SpringBootApplication
@@ -45,7 +48,7 @@ public class LabApplication {
 	}
 
 	@Bean
-	public CommandLineRunner runner(NoticeBoardRepository noticeBoardRepository, MemberRepository memberRepository) {		
+	public CommandLineRunner runner(NoticeBoardRepository noticeBoardRepository, MemberRepository memberRepository, PublicationRepository publicationRepositroy) {		
 		return (args) -> {
 			/* 기존 데이터 모두 삭제 */ 
 			noticeBoardRepository.deleteAll();
@@ -76,6 +79,14 @@ public class LabApplication {
 					.authorityType(AuthorityType.MANAGER)
 					.activeStatus(ActiveStatus.ACTIVE)
 					.build());
+			
+			memberRepository.save(Member.builder()
+					.memberId("manager2")
+					.password(passwordEncoder.encode("123123123"))
+					.memberType(MemberType.PART_TIME_MS)
+					.authorityType(AuthorityType.MANAGER)
+					.activeStatus(ActiveStatus.ACTIVE)
+					.build());
 
 			memberRepository.save(Member.builder()
 				.memberId("sdy")
@@ -92,6 +103,57 @@ public class LabApplication {
 				.authorityType(AuthorityType.GENERAL)
 				.activeStatus(ActiveStatus.ACTIVE)
 				.build());
+			
+			/* 기존 데이터 모두 삭제 */ 
+			publicationRepositroy.deleteAll();
+			
+			IntStream.rangeClosed(1, 50).forEach(index -> 
+				publicationRepositroy.save(Publication.builder()
+					.title("게시글" + index)
+					.authors("저자" + index)
+					.publishedIn("KSC 2019")
+					.publishedDate(LocalDate.now())
+					.publicationType(PublicationType.JOURNAL)
+					.kindType(KindType.DOMESTIC)
+					.volume("" + index)
+					.number("" + index)
+					.build()));
+			
+			IntStream.rangeClosed(1, 50).forEach(index -> 
+				publicationRepositroy.save(Publication.builder()
+					.title("게시글" + index)
+					.authors("저자" + index)
+					.publishedIn("KSC 2018")
+					.publishedDate(LocalDate.now())
+					.publicationType(PublicationType.POSTER)
+					.kindType(KindType.DOMESTIC)
+					.volume("" + index)
+					.number("" + index)
+					.build()));
+			
+			IntStream.rangeClosed(1, 50).forEach(index -> 
+				publicationRepositroy.save(Publication.builder()
+					.title("게시글" + index)
+					.authors("저자" + index)
+					.publishedIn("RTAS 2017")
+					.publishedDate(LocalDate.now())
+					.publicationType(PublicationType.JOURNAL)
+					.kindType(KindType.INTERNATIONAL)
+					.volume("" + index)
+					.number("" + index)
+					.build()));
+			
+			IntStream.rangeClosed(1, 50).forEach(index -> 
+				publicationRepositroy.save(Publication.builder()
+					.title("게시글" + index)
+					.authors("저자" + index)
+					.publishedIn("ICNGC 2016")
+					.publishedDate(LocalDate.now())
+					.publicationType(PublicationType.POSTER)
+					.kindType(KindType.INTERNATIONAL)
+					.volume("" + index)
+					.number("" + index)
+				.build()));
 		};
 	}
 }

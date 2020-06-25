@@ -1,4 +1,4 @@
-package kr.ac.univ.lab.common.exception;
+package kr.ac.univ.lab.common.error.handler.authentication;
 
 import java.io.IOException;
 
@@ -17,8 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException exception) throws IOException, ServletException {
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 		// 로그인 실패시 기능 구현
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");

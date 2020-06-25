@@ -1,7 +1,8 @@
 package kr.ac.univ.lab.noticeBoard.controller;
 
-
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.ac.univ.lab.common.error.exception.FileTypeException;
+import kr.ac.univ.lab.common.validation.FileValidator;
 import kr.ac.univ.lab.noticeBoard.domain.NoticeBoard;
+import kr.ac.univ.lab.noticeBoard.dto.NoticeBoardDto;
+import kr.ac.univ.lab.noticeBoard.mapper.NoticeBoardMapper;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardAttachedFileService;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardCommentService;
 import kr.ac.univ.lab.noticeBoard.service.NoticeBoardService;
-
 
 @RestController
 @RequestMapping("/api/notice-boards")
@@ -34,16 +38,17 @@ public class NoticeBoardRestController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> postNoticeBoard(@RequestBody NoticeBoard noticeBoard) {
-		Long idx = noticeBoardService.insertNoticeBoard(noticeBoard);
+	public ResponseEntity<?> postNoticeBoard(@RequestBody @Valid NoticeBoardDto noticeBoardDto) {
+		Long idx = noticeBoardService.insertNoticeBoard(NoticeBoardMapper.INSTANCE.toEntity(noticeBoardDto));
 
 		return new ResponseEntity<>(idx, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{idx}")
-	public ResponseEntity<?> putNoticeBoard(@PathVariable("idx") Long idx, @RequestBody NoticeBoard noticeBoard) {
+	public ResponseEntity<?> putNoticeBoard(@PathVariable("idx") Long idx, @RequestBody NoticeBoardDto noticeBoardDto) {
+		
 		NoticeBoard persistNoticeBoard = noticeBoardService.getNoticeBoardByIdx(idx);
-		persistNoticeBoard.update(noticeBoard);
+		persistNoticeBoard.update(NoticeBoardMapper.INSTANCE.toEntity(noticeBoardDto));
 		noticeBoardService.insertNoticeBoard(persistNoticeBoard);
 
 		return new ResponseEntity<>("{}", HttpStatus.OK);
@@ -60,7 +65,13 @@ public class NoticeBoardRestController {
 
 	// 첨부 파일 업로드
 	@PostMapping("/attachedFile")
-	public ResponseEntity<?> uploadAttachedFile(Long idx, MultipartFile[] files) {
+	public ResponseEntity<?> uploadAttachedFile(Long idx, MultipartFile[] files) throws Exception {
+		// File type validation
+		String fileValidationResult = FileValidator.isFileValid(files);
+		
+		if(!"valid".equals(fileValidationResult)) 
+			throw new FileTypeException(fileValidationResult);
+		
 		noticeBoardAttachedFileService.uploadAttachedFile(idx, files);
 
 		return new ResponseEntity<>("성공!", HttpStatus.CREATED);

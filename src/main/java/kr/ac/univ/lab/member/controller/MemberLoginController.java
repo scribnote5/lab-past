@@ -10,16 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import kr.ac.univ.lab.member.dto.UserDto;
-import kr.ac.univ.lab.member.service.MemberService;
 
 @Controller
 @RequestMapping("/member")
 public class MemberLoginController {
-	private final MemberService memberService;
-	
-	public MemberLoginController(MemberService memberService) {
-		this.memberService = memberService;
-	}
 		
 	// Login Page
 	@GetMapping("/index")

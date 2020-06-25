@@ -14,11 +14,11 @@
 		<form name="form" id="form" th:object="${searchDto}" action="#"  >
 	
 		<div class="page-header">
-			<h1>게시글 목록</h1>
+			<h1>NoticeBoard List</h1>
 		</div>
 		
 		<div class="pull-right" style="width: 100px; margin: 10px 0;">
-			<button id="search" type="button" class="btn btn-primary btn-block">검색</button>
+			<button id="search" type="button" class="btn btn-primary btn-block">Search</button>
 		</div>
 		
 		<div class="pull-right" style="width: 200px; margin: 10px 10px; ">
@@ -27,9 +27,9 @@
 		
 		<div class="pull-right" style="width: 100px; margin: 10px 10px; ">
 			<select name="searchType" th:field="*{searchType}" class="form-control input-sm">
-	            <option th:value="TITLE">재목</option>
-	            <option th:value="CONTENT">내용</option>
-	            <option th:value="MEMBER_ID">글쓴이</option>
+	            <option th:value="TITLE">Title</option>
+	            <option th:value="CONTENT">Content</option>
+	            <option th:value="MEMBER_ID">Member Id</option>
 	        </select>
 		</div>
 		
@@ -38,13 +38,13 @@
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th class="col-md-1">idx</th>
-						<th class="col-md-3">제목</th>
-						<th class="col-md-1">글쓴이</th>
-						<th class="col-md-2">작성 날짜</th>
-						<th class="col-md-2">수정 날짜</th>
-						<th class="col-md-1">게시 상태</th>
-						<th class="col-md-1">조회수</th>
+						<th class="col-md-1">No.</th>
+						<th class="col-md-3">Title</th>
+						<th class="col-md-1">Member Id</th>
+						<th class="col-md-2">Created Date</th>
+						<th class="col-md-2">Modified Date</th>
+						<th class="col-md-1">Active Status</th>
+						<th class="col-md-1">View Count</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -59,8 +59,8 @@
 						<td th:text="${#temporals.format(noticeBoardDto.createdDate,'yyyy-MM-dd HH:mm')}"></td>
 						<td th:text="${#temporals.format(noticeBoardDto.lastModifiedDate,'yyyy-MM-dd HH:mm')}"></td>
 						
-						<td th:if="${noticeBoardDto.activeStatus?.name() == 'ACTIVE'}" th:text="게시중"></td>
-						<td th:if="${noticeBoardDto.activeStatus?.name() == 'INACTIVE'}" th:text="비게시중"></td>
+						<td th:if="${noticeBoardDto.activeStatus?.name() == 'ACTIVE'}" th:text="Active"></td>
+						<td th:if="${noticeBoardDto.activeStatus?.name() == 'INACTIVE'}" th:text="Inactive"></td>
 						
 						<td th:text="${noticeBoardDto.viewCount}"></td>
 					</tr>
@@ -70,7 +70,7 @@
 		<br>
 		
 		<div class="pull-right" style="width: 100px; margin: 10px 0;">
-			<a href="/notice-board/form" class="btn btn-primary btn-block">등록</a>
+			<a href="/notice-board/form" class="btn btn-primary btn-block">Register</a>
 		</div>
 
 		<!-- Pagination -->

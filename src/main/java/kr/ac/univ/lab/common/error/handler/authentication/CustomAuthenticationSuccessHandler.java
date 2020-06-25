@@ -1,4 +1,4 @@
-package kr.ac.univ.lab.common.exception;
+package kr.ac.univ.lab.common.error.handler.authentication;
 
 import java.io.IOException;
 
