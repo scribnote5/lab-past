@@ -45,8 +45,7 @@ public class NoticeBoardRestController {
 	}
 
 	@PutMapping("/{idx}")
-	public ResponseEntity<?> putNoticeBoard(@PathVariable("idx") Long idx, @RequestBody NoticeBoardDto noticeBoardDto) {
-		
+	public ResponseEntity<?> putNoticeBoard(@PathVariable("idx") Long idx, @RequestBody @Valid NoticeBoardDto noticeBoardDto) {
 		NoticeBoard persistNoticeBoard = noticeBoardService.getNoticeBoardByIdx(idx);
 		persistNoticeBoard.update(NoticeBoardMapper.INSTANCE.toEntity(noticeBoardDto));
 		noticeBoardService.insertNoticeBoard(persistNoticeBoard);

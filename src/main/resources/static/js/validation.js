@@ -47,7 +47,7 @@ function validationByLength(inputName, maxStrLength, title) {
 	var strLength = document.getElementsByName(inputName)[0].value.length;
 
 	if(strLength > maxStrLength) { 
-		alert(title + " is up to " + maxLength + "characters long." +
+		alert(title + " is up to " + maxStrLength + "characters long." +
 				"\n(Number of characters currently entered: " + strLength + ")");
 		document.getElementsByName(inputName)[0].focus();
 		
@@ -84,8 +84,6 @@ function validationBySize(inputName, maxByteSize, title) {
  * var totalFileSize = 0;
  */
 function isImageFile(file) {	
-	return true;
-
 	// file validation - 필수 확장자
 	var includeArray = [ ".jpg", ".jpeg", ".png" ];
 	// 파일 이름 

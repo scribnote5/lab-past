@@ -110,11 +110,12 @@
 	<th:block th:replace="layout/script.html"></th:block>
   
 	<!-- javascript -->
-	<script>
+	<script th:inline="javascript">
 		var insertFileArray = [];
 		var deleteFileArray = [];
-		var imgDataId = 0;
+		var imgDataId = /*[[${noticeBoardDto.attachedFileList.size()}]]*/;
 		var totalFileSize = 0;
+		var exit = null;
 		
 		$(document).ready(function() {
 			<!-- summernote setting -->
@@ -197,14 +198,31 @@
 			
 			deleteFileArray.push(idx);
 		}
+		
+		function deleteNoticeBoard(noticeBoardIdx) {
+			// 게시글 삭제
+       		$.ajax({
+                url: "/api/notice-boards/" + noticeBoardIdx,
+                type: "delete",
+                dataType: "text",
+                contentType: "application/json",
+                async: false,
+       		})
+            .done(function (msg) {
+          	   console.log("NoticeBoard delete success.");
+            })
+            .fail(function (msg) {
+               	console.log("NoticeBoard delete fail.");
+    	 	});
+		}
 	</script>
 	
     <script th:if="!${noticeBoardDto?.idx}">
     	$('#insert').click(function () {
 			// javascript validation(input tag Name, length || size, message name )
-   			if(!(validationByLength("title", 50, "title") && validationBySize("content", 16777215, "content"))) {
+   			/* if(!(validationByLength("title", 50, "title") && validationBySize("content", 16777215, "content"))) {
    				return false;
-   			}
+   			} */
 
    			var jsonData = $("#form").serializeObject();
  	       	var noticeBoardIdx;
@@ -216,136 +234,134 @@
                 data: JSON.stringify(jsonData),
 				dataType: "text",
 				contentType: "application/json",
-								
-                success: function(msg) {
-                	noticeBoardIdx = msg;
-                	
-                	var formData = new FormData();
-                	
-           			for(var i = 0; i < insertFileArray.length; i++) {
-           				formData.append("files", insertFileArray[i]);
-           			}
-           			
-           			formData.append("idx", noticeBoardIdx);
-          			
-           			// 파일 업로드
-        			$.ajax({
-        				url: "/api/notice-boards/attachedFile",
-        				type: "post",
-        				data: formData,
-        				dataType: "text",
-        	            enctype: 'multipart/form-data',
-        	            processData: false,
-        	            contentType: false,
-        	            
-        	            success: function(msg){
-        	                location.href = '/notice-board/list';
-        	            },
-        	            error: function (msg) {
-        	            	validatioMessageAlert((JSON.parse(msg.responseText)));
-        	            	
-        	            	// 게시글 삭제
-        	           		$.ajax({
-        	                    url: "/api/notice-boards/" + noticeBoardIdx,
-        	                    type: "delete",
-        	                    dataType: "text",
-        	                    contentType: "application/json",
-        	                    
-        	                    success: function () {
-        	                        console.log("NoticeBoard delete success.");
-        	                    },
-        	                    error: function () {
-        	                    	console.log("NoticeBoard delete fail.");
-        	                    }
-        	                });
-        	            }
-                	});
-              	},
-              	error: function(msg) {                   
-              		validatioMessageAlert((JSON.parse(msg.responseText)));
-                }
-			});
+			 	async: false,			
+			})		
+			.done(function(msg) {
+               	noticeBoardIdx = msg;
+               	exit = false;
+           	})  	
+           	.fail(function(msg) {
+           		validatioMessageAlert((JSON.parse(msg.responseText)));
+           		exit = true;
+           	});
+ 	       	
+            if(exit) return false;
+			
             
+         	// 파일 업로드
+            var formData = new FormData();
+         	
+   			for(var i = 0; i < insertFileArray.length; i++) {
+   				formData.append("files", insertFileArray[i]);
+   			}
+
+   			formData.append("idx", noticeBoardIdx);
+	        
+			$.ajax({
+				url: "/api/notice-boards/attachedFile",
+				type: "post",
+				data: formData,
+				dataType: "text",
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+	            async: false,
+			})
+			.done(function(msg) {
+	            location.href = "/notice-board/list";
+			})
+	        .fail(function(msg) {
+	        	validatioMessageAlert((JSON.parse(msg.responseText)));
+	        	deleteNoticeBoard(noticeBoardIdx);
+	        });
+			
    		});
     </script>
     
     <script th:if="${noticeBoardDto?.idx}" th:inline="javascript">
     	$('#update').click(function () {
     		// javascript validation(input tag Name, length || size, message name )
-   			if(!(validationByLength("title", 50, "title") && validationBySize("content", 16777215, "content"))) {
+   			/* if(!(validationByLength("title", 50, "title") && validationBySize("content", 16777215, "content"))) {
    				return false;
-   			}
+   			} */
     		
     		var jsonData = $("#form").serializeObject();
-        	var idx = document.getElementsByName('idx')[0].value;
+        	var idx = document.getElementsByName("idx")[0].value;
         	
         	// 게시글 수정
             $.ajax({
-                url: "/api/notice-boards/" + document.getElementsByName('idx')[0].value,
+                url: "/api/notice-boards/" + document.getElementsByName("idx")[0].value,
                 type: "put",
                 data: JSON.stringify(jsonData),
                 dataType: "text",
                 contentType: "application/json",
+                async: false,
+            })
+            .done(function(msg) {
+            	exit = false;
+            })
+	        .fail(function(msg) {
+	        	validatioMessageAlert((JSON.parse(msg.responseText)));
+	        	exit = true;
+	        });
+        	
+            if(exit) return false;
+        	
                 
-                success: function () {
-                	// 만일 파일이 수정되지 않은 경우 '파일 업로드' 및 '파일 삭제'를 수행하지 않음
-        			if(insertFileArray.length == 0 && deleteFileArray.length == 0) {
-        				location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;     
-        			}
+           	// 만일 파일이 수정되지 않은 경우 '파일 업로드' 및 '파일 삭제'를 수행하지 않음
+   			if(insertFileArray.length == 0 && deleteFileArray.length == 0) {
+   				location.href = '/notice-board?idx=' + document.getElementsByName("idx")[0].value;     
+   			}
                  	
-        			// 파일 삭제  
-                    if(deleteFileArray.length > 0) {
-            			$.ajax({
-               				url: "/api/notice-boards/attachedFile",
-               				type: "delete",
-               				data: JSON.stringify(deleteFileArray),
-               				contentType: "application/json",
- 
-               	            success: function(){
-               	            	console.log("AttachedFile delete success."); 
-               	    			
-               	            	if(insertFileArray.length == 0) 
-               	            		location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;
-               	            	
-               	            },
-               	            error: function () {
-               	            	console.log("AttachedFile delete fail.");
-               	           	}
-               	    	});
-                    }
+			// 파일 삭제  
+            if(deleteFileArray.length > 0) {
+    			$.ajax({
+       				url: "/api/notice-boards/attachedFile",
+       				type: "delete",
+       				data: JSON.stringify(deleteFileArray),
+       				contentType: "application/json",
+       				async: false,
+                })
+                .done(function(msg) {
+                	console.log("AttachedFile delete success."); 
+            		exit = false;
+            	})
+                .fail(function(msg) {
+                	console.log("AttachedFile delete fail.");
+                	exit = true;
+                }); 	
+            }
+			
+            if(exit) return false;
+			
+            if(insertFileArray.length == 0) location.href = "/notice-board?idx=" + document.getElementsByName("idx")[0].value;
         			
-                 	// 파일 업로드
-                    if(insertFileArray.length > 0) {
-               			var formData = new FormData();
-               			
-               			for(var i = 0; i < insertFileArray.length; i++) {
-               				formData.append("files", insertFileArray[i]);
-               			}
-               			
-               			formData.append("idx", idx);
-               			
-            			$.ajax({
-            				url: "/api/notice-boards/attachedFile",
-            				type: "post",
-            				data: formData,
-            				dataType: "text",
-            	            enctype: 'multipart/form-data',
-            	            processData: false,
-            	            contentType: false,
-            	                      
-            	            success: function(){
-            	            	location.href = '/notice-board?idx=' + document.getElementsByName('idx')[0].value;    	
-            	            }, 
-            	            error: function (msg) {
-            	            	validatioMessageAlert((JSON.parse(msg.responseText)));
-            	            } 
-                    	});
-                    }                	
-                },
-                error: function () {
-                	validatioMessageAlert((JSON.parse(msg.responseText)));
-                }
-            });      	
+         	// 파일 업로드
+   			var formData = new FormData();
+   			
+   			for(var i = 0; i < insertFileArray.length; i++) {
+   				formData.append("files", insertFileArray[i]);
+   			}
+   			
+   			formData.append("idx", idx);
+   			
+			$.ajax({
+				url: "/api/notice-boards/attachedFile",
+				type: "post",
+				data: formData,
+				dataType: "text",
+	            enctype: 'multipart/form-data',
+	            processData: false,
+	            contentType: false,
+			})
+			.done(function(msg) { 
+				location.href = "/notice-board?idx=" + document.getElementsByName("idx")[0].value;
+			})
+			.fail(function(msg) {
+				validatioMessageAlert((JSON.parse(msg.responseText)));
+				location.reload(true);
+			})
+			
     	});
     </script>
     
